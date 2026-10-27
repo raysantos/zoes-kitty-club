@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Zoe's Kitty Club: take care of your cat, level up, unlock new cats and outfits.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
+<title>Zoe’s Kitty Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&family=Nunito:wght@600;800;900&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font-size:14px}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+/* Layout: one-screen pet room — cat stage on top, stat meters, action buttons, then tabs for Wardrobe and Cat Collection */
+:root{
+  --bg:#ffe9ef;        /* strawberry milk */
+  --room:#fff7e8;      /* cream wall */
+  --floor:#ffd6a8;     /* peach rug */
+  --ink:#5b2a4a;       /* plum text */
+  --soft:#9a6a86;
+  --pink:#ff6fa5;
+  --mint:#62d2b4;
+  --sun:#ffc94a;
+  --sky:#7cc6ff;
+  --lilac:#b69cff;
+  --card:#ffffff;
+  --line:#f6c9da;
+  --display:"Chewy","Comic Sans MS",cursive;
+  --body:"Nunito",system-ui,sans-serif;
+  color-scheme:light;
+}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-weight:600;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:16px 32px;
+  background-image:radial-gradient(var(--line) 2px,transparent 2.5px);background-size:22px 22px}
+.app{max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+h1{font-family:var(--display);font-weight:400;font-size:2rem;margin:0;color:var(--pink);letter-spacing:.5px;text-shadow:2px 2px 0 #fff}
+.coins{background:var(--card);border:3px solid var(--sun);border-radius:999px;padding:4px 12px;font-weight:900;font-variant-numeric:tabular-nums;display:flex;gap:6px;align-items:center}
+.coin{width:16px;height:16px;border-radius:50%;background:var(--sun);box-shadow:inset -2px -2px 0 #e9a817}
+
+.stage{position:relative;background:linear-gradient(var(--room) 0 68%,var(--floor) 68%);border:4px solid #fff;border-radius:28px;box-shadow:0 6px 0 var(--line);overflow:hidden;aspect-ratio:1/0.82;max-width:100%}
+.stage .window{position:absolute;left:8%;top:9%;width:24%;aspect-ratio:1;border-radius:14px;background:var(--sky);border:6px solid #fff;box-shadow:0 0 0 2px var(--line)}
+.stage .window::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 46%,#fff 46% 54%,transparent 54%),linear-gradient(transparent 46%,#fff 46% 54%,transparent 54%)}
+.stage .shelf{position:absolute;right:8%;top:18%;width:26%;height:8px;border-radius:4px;background:#e8b68a}
+.stage .plant{position:absolute;right:13%;top:8%;width:9%;aspect-ratio:1;border-radius:50% 50% 8px 8px;background:var(--mint)}
+.nameplate{position:absolute;left:50%;transform:translateX(-50%);bottom:5%;background:#fff;border-radius:999px;padding:4px 14px;font-weight:900;white-space:nowrap;box-shadow:0 3px 0 var(--line)}
+#cat{position:absolute;left:50%;bottom:11%;width:62%;transform:translateX(-50%);transform-origin:50% 100%}
+#cat.bounce{animation:bounce .6s ease}
+#cat.sleep{filter:saturate(.75)}
+@keyframes bounce{0%,100%{transform:translateX(-50%) scale(1)}30%{transform:translateX(-50%) scale(1.08,.9)}60%{transform:translateX(-50%) scale(.95,1.08) translateY(-10px)}}
+.tail{transform-origin:150px 205px;animation:wag 2.4s ease-in-out infinite}
+@keyframes wag{50%{transform:rotate(-10deg)}}
+.blink{animation:blink 4s infinite;transform-origin:center}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.fx{position:absolute;pointer-events:none;font-size:1.8rem;animation:float 1.3s ease-out forwards}
+@keyframes float{to{transform:translateY(-90px) scale(1.4);opacity:0}}
+.zzz{position:absolute;right:22%;top:26%;font-family:var(--display);font-size:1.8rem;color:var(--lilac);animation:zz 2s infinite}
+@keyframes zz{50%{transform:translate(8px,-10px);opacity:.4}}
+.mood{position:absolute;top:5%;left:50%;transform:translateX(-50%);background:#fff;border-radius:16px;padding:6px 12px;font-weight:800;font-size:.9rem;box-shadow:0 3px 0 var(--line);white-space:nowrap}
+
+.level{background:var(--card);border-radius:20px;padding:12px 14px;box-shadow:0 4px 0 var(--line);display:flex;align-items:center;gap:12px}
+.badge{flex:none;width:52px;height:52px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-family:var(--display);font-size:1.5rem;box-shadow:inset 0 -4px 0 #e04e88}
+.xpwrap{flex:1;min-width:0}
+.xpwrap .row{display:flex;justify-content:space-between;font-size:.85rem;font-weight:800;color:var(--soft);font-variant-numeric:tabular-nums}
+.bar{height:14px;border-radius:999px;background:#fde3ec;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;border-radius:999px;transition:width .4s}
+#xpfill{background:repeating-linear-gradient(45deg,var(--pink) 0 10px,#ff8db8 10px 20px)}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card);border-radius:16px;padding:10px 12px;box-shadow:0 4px 0 var(--line)}
+.stat .row{display:flex;justify-content:space-between;font-weight:900;font-size:.9rem}
+.stat .row span:last-child{color:var(--soft);font-variant-numeric:tabular-nums}
+.stat.low{animation:wiggle .5s infinite}
+@keyframes wiggle{25%{transform:rotate(-1deg)}75%{transform:rotate(1deg)}}
+
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.act{border:0;border-radius:18px;padding:10px 4px 8px;font:900 .85rem var(--body);color:var(--ink);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;box-shadow:0 5px 0 rgba(91,42,74,.18);transition:transform .1s}
+.act b{font-size:1.7rem;line-height:1.1}
+.act:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(91,42,74,.18)}
+.act:disabled{opacity:.5;cursor:not-allowed}
+.act:focus-visible,.tab:focus-visible,.chip:focus-visible,.catcard:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+
+.tabs{display:flex;gap:8px}
+.tab{flex:1;border:0;border-radius:999px;padding:10px;font:900 1rem var(--body);background:#fff;color:var(--soft);cursor:pointer;box-shadow:0 3px 0 var(--line)}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff;box-shadow:none}
+.panel{background:var(--card);border-radius:22px;padding:14px;box-shadow:0 4px 0 var(--line);display:flex;flex-direction:column;gap:12px}
+.panel h2{font-family:var(--display);font-weight:400;font-size:1.3rem;margin:0;color:var(--pink)}
+.panel p.hint{margin:0;color:var(--soft);font-size:.85rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:3px solid transparent;border-radius:14px;background:#fff6f9;padding:6px 10px;font:800 .85rem var(--body);color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{border-color:var(--pink);background:#ffe6ef}
+.chip.locked{opacity:.55;cursor:not-allowed}
+.sw{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
+.cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.catcard{border:3px solid transparent;border-radius:18px;background:#fff6f9;padding:8px;cursor:pointer;text-align:center;font:800 .85rem var(--body);color:var(--ink)}
+.catcard[aria-pressed="true"]{border-color:var(--mint);background:#e9fbf5}
+.catcard.locked{cursor:not-allowed}
+.catcard.locked svg{filter:brightness(0) opacity(.18)}
+.catcard small{display:block;color:var(--soft);font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(140%);background:var(--ink);color:#fff;padding:12px 18px;border-radius:18px;font-weight:800;max-width:calc(100% - 32px);text-align:center;transition:transform .35s;z-index:5}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.reset{align-self:center;background:none;border:0;color:var(--soft);font:700 .8rem var(--body);text-decoration:underline;cursor:pointer}
+.confirm{display:flex;gap:8px;justify-content:center;align-items:center;font-size:.85rem}
+.confirm button{border:0;border-radius:999px;padding:6px 12px;font:800 .85rem var(--body);cursor:pointer}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:380px){.act{font-size:.75rem}.act b{font-size:1.4rem}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <h1>Zoe’s Kitty Club</h1>
+    <div class="coins" title="Fish treats earned"><span class="coin"></span><span id="coins">0</span></div>
+  </header>
+
+  <div class="stage" id="stage">
+    <div class="window"></div><div class="shelf"></div><div class="plant"></div>
+    <div class="mood" id="mood">Mochi is happy!</div>
+    <svg id="cat" viewBox="0 0 300 260" aria-label="Your cat"></svg>
+    <div class="nameplate" id="nameplate">Mochi</div>
+  </div>
+
+  <div class="level">
+    <div class="badge" id="lvl">1</div>
+    <div class="xpwrap">
+      <div class="row"><span id="lvlname">Level 1 · New Friend</span><span id="xptext">0 / 30 XP</span></div>
+      <div class="bar"><i id="xpfill" style="width:0"></i></div>
+      <div class="row" style="margin-top:4px"><span id="nextunlock">Next cat at level 3</span></div>
+    </div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="actions">
+    <button class="act" id="a-feed" style="background:#ffd9a0"><b>🐟</b>Feed</button>
+    <button class="act" id="a-play" style="background:#c9f1e4"><b>🧶</b>Play</button>
+    <button class="act" id="a-bath" style="background:#cfe9ff"><b>🫧</b>Bath</button>
+    <button class="act" id="a-sleep" style="background:#e3d9ff"><b>🌙</b>Nap</button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t-wardrobe" aria-selected="true">Wardrobe</button>
+    <button class="tab" role="tab" id="t-cats" aria-selected="false">My Cats</button>
+  </div>
+
+  <section class="panel" id="p-wardrobe">
+    <h2>Fur color</h2>
+    <div class="chips" id="furs"></div>
+    <h2>Accessory</h2>
+    <div class="chips" id="accs"></div>
+    <p class="hint">New colors and accessories unlock as your cat levels up.</p>
+  </section>
+
+  <section class="panel" id="p-cats" hidden>
+    <h2>Cat collection</h2>
+    <div class="cats" id="cats"></div>
+    <p class="hint">Take great care of your cat to unlock new friends. Your level and outfits are shared by every cat.</p>
+  </section>
+
+  <div id="resetarea" style="display:flex;justify-content:center"><button class="reset" id="reset">Start over</button></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const BREEDS=[
+  {id:"mochi",name:"Mochi",kind:"Snowball Kitten",lvl:1,pattern:"none",fur:"cream"},
+  {id:"tiger",name:"Tiger Lily",kind:"Tabby",lvl:3,pattern:"tabby",fur:"ginger"},
+  {id:"pearl",name:"Pearl",kind:"Siamese",lvl:5,pattern:"points",fur:"cream"},
+  {id:"patches",name:"Patches",kind:"Calico",lvl:7,pattern:"calico",fur:"snow"},
+  {id:"luna",name:"Luna",kind:"Tuxedo",lvl:9,pattern:"tux",fur:"midnight"},
+  {id:"stella",name:"Stella",kind:"Galaxy Cat",lvl:12,pattern:"galaxy",fur:"lilac"}
+];
+const FURS=[
+  {id:"cream",name:"Cream",c:"#fff1d6",d:"#f3d6a8",lvl:1},
+  {id:"snow",name:"Snow",c:"#ffffff",d:"#e8e2ee",lvl:1},
+  {id:"ginger",name:"Ginger",c:"#ffb86b",d:"#e98a3c",lvl:1},
+  {id:"grey",name:"Smoky",c:"#c9c4d6",d:"#9e97b0",lvl:2},
+  {id:"pink",name:"Bubblegum",c:"#ffc2dc",d:"#ff8fbd",lvl:4},
+  {id:"mint",name:"Mint",c:"#bff0de",d:"#7fd8bb",lvl:6},
+  {id:"midnight",name:"Midnight",c:"#4a3f5c",d:"#2f2740",lvl:8},
+  {id:"lilac",name:"Lilac",c:"#d9c8ff",d:"#a98cf2",lvl:10},
+  {id:"gold",name:"Sparkle Gold",c:"#ffe27a",d:"#f2b92c",lvl:14}
+];
+const ACCS=[
+  {id:"none",name:"None",lvl:1},
+  {id:"bow",name:"Pink bow",lvl:2},
+  {id:"collar",name:"Bell collar",lvl:3},
+  {id:"flower",name:"Flower",lvl:5},
+  {id:"glasses",name:"Heart glasses",lvl:7},
+  {id:"tiara",name:"Tiara",lvl:10},
+  {id:"crown",name:"Royal crown",lvl:13}
+];
+const STATS=[
+  {id:"hunger",name:"Tummy",color:"var(--sun)"},
+  {id:"fun",name:"Fun",color:"var(--mint)"},
+  {id:"clean",name:"Clean",color:"var(--sky)"},
+  {id:"energy",name:"Energy",color:"var(--lilac)"}
+];
+const TITLES=["New Friend","Cuddle Buddy","Purr Pal","Whisker Wizard","Paw Princess","Meow Master","Kitty Queen"];
+const KEY="kitty-cuddle-club-v1";
+
+const fresh=()=>({xp:0,lvl:1,coins:0,breed:"mochi",fur:{},acc:"none",stats:{hunger:70,fun:60,clean:80,energy:75},asleep:false,seen:["mochi"]});
+let S=fresh();
+try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(fresh(),JSON.parse(raw));}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+const need=l=>20+l*10;
+const breed=()=>BREEDS.find(b=>b.id===S.breed)||BREEDS[0];
+const furOf=b=>FURS.find(f=>f.id===(S.fur[b.id]||b.fur))||FURS[0];
+
+function catSVG(b,fur,acc,opts={}){
+  const c=fur.c,d=fur.d,eyes=opts.sleep;
+  let pat="";
+  if(b.pattern==="tabby")pat=`<g fill="${d}" opacity=".9"><path d="M130 42 l6 22 l6-22z"/><path d="M150 38 l6 24 l6-24z"/><path d="M170 42 l6 22 l6-22z"/><path d="M108 150 q14 6 0 14z"/><path d="M104 175 q16 6 0 14z"/><path d="M196 150 q-14 6 0 14z"/><path d="M200 175 q-16 6 0 14z"/></g>`;
+  if(b.pattern==="points")pat=`<ellipse cx="156" cy="110" rx="34" ry="26" fill="#8a6650" opacity=".55"/><path d="M92 58 L104 6 L134 40Z M220 58 L208 6 L178 40Z" fill="#6b4a38"/>`;
+  if(b.pattern==="calico")pat=`<path d="M100 40 q20-20 46 0 q-8 30-46 22z" fill="#ffa95a"/><path d="M168 44 q30-6 44 26 q-30 6-44-26z" fill="#4a3f3f"/><ellipse cx="128" cy="178" rx="22" ry="16" fill="#ffa95a"/><ellipse cx="186" cy="196" rx="18" ry="14" fill="#4a3f3f"/>`;
+  if(b.pattern==="tux")pat=`<path d="M156 92 q-30 10-28 34 q28 14 56 0 q2-24-28-34z" fill="#fff"/><ellipse cx="156" cy="190" rx="30" ry="40" fill="#fff"/>`;
+  if(b.pattern==="galaxy")pat=`<g fill="#fff"><circle cx="122" cy="40" r="2.5"/><circle cx="188" cy="54" r="2"/><circle cx="114" cy="168" r="3"/><circle cx="198" cy="182" r="2.5"/><circle cx="150" cy="208" r="2"/><path d="M172 30 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/><path d="M128 190 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>`;
+  const eyeCol=b.pattern==="points"?"#4fa8ff":b.pattern==="galaxy"?"#ff6fa5":"#3a2a3a";
+  const eyesG=eyes
+    ?`<path d="M118 86 q10 8 20 0 M174 86 q10 8 20 0" stroke="#3a2a3a" stroke-width="4" fill="none" stroke-linecap="round"/>`
+    :`<g class="blink" style="transform-box:fill-box"><ellipse cx="128" cy="84" rx="10" ry="13" fill="${eyeCol}"/><ellipse cx="184" cy="84" rx="10" ry="13" fill="${eyeCol}"/><circle cx="131" cy="79" r="4" fill="#fff"/><circle cx="187" cy="79" r="4" fill="#fff"/></g>`;
+  let a="";
+  if(acc==="bow")a=`<g transform="translate(206 30) rotate(18)"><path d="M0 0 L-22 -14 L-22 14Z M0 0 L22 -14 L22 14Z" fill="#ff6fa5"/><circle r="7" fill="#ff3d86"/></g>`;
+  if(acc==="collar")a=`<path d="M112 136 q44 22 88 0" stroke="#ff6fa5" stroke-width="10" fill="none" stroke-linecap="round"/><circle cx="156" cy="152" r="9" fill="#ffc94a" stroke="#e9a817" stroke-width="2"/>`;
+  if(acc==="flower")a=`<g transform="translate(102 34)"><g fill="#fff"><circle cx="0" cy="-10" r="8"/><circle cx="10" cy="-2" r="8"/><circle cx="6" cy="10" r="8"/><circle cx="-6" cy="10" r="8"/><circle cx="-10" cy="-2" r="8"/></g><circle r="6" fill="#ffc94a"/></g>`;
+  if(acc==="glasses")a=`<g fill="#ff6fa5" opacity=".9"><path d="M128 100 c-20-14-20-32-4-32 c6 0 4 6 4 6 c0 0-2-6 4-6 c16 0 16 18-4 32z" transform="translate(0 -6)"/><path d="M184 100 c-20-14-20-32-4-32 c6 0 4 6 4 6 c0 0-2-6 4-6 c16 0 16 18-4 32z" transform="translate(0 -6)"/></g><path d="M140 80 h32" stroke="#ff6fa5" stroke-width="4"/>`;
+  if(acc==="tiara")a=`<path d="M122 30 L134 12 L146 26 L156 4 L166 26 L178 12 L190 30Z" fill="#cfe9ff" stroke="#7cc6ff" stroke-width="3" stroke-linejoin="round"/><circle cx="156" cy="20" r="5" fill="#ff6fa5"/>`;
+  if(acc==="crown")a=`<path d="M118 34 L122 4 L140 22 L156 0 L172 22 L190 4 L194 34Z" fill="#ffc94a" stroke="#e9a817" stroke-width="3" stroke-linejoin="round"/><circle cx="140" cy="26" r="4" fill="#ff6fa5"/><circle cx="156" cy="24" r="4" fill="#62d2b4"/><circle cx="172" cy="26" r="4" fill="#7cc6ff"/>`;
+  return `
+  <g class="tail"><path d="M200 210 q70 -10 60 -80 q-4 -20 -18 -12 q8 40 -46 70" fill="${c}" stroke="${d}" stroke-width="4"/></g>
+  <ellipse cx="156" cy="190" rx="66" ry="56" fill="${c}" stroke="${d}" stroke-width="4"/>
+  <ellipse cx="124" cy="240" rx="20" ry="12" fill="${c}" stroke="${d}" stroke-width="4"/>
+  <ellipse cx="188" cy="240" rx="20" ry="12" fill="${c}" stroke="${d}" stroke-width="4"/>
+  <path d="M92 66 L100 4 L144 38Z" fill="${c}" stroke="${d}" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M220 66 L212 4 L168 38Z" fill="${c}" stroke="${d}" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M104 52 L106 22 L126 38Z M208 52 L206 22 L186 38Z" fill="#ffb3cf"/>
+  <ellipse cx="156" cy="84" rx="70" ry="60" fill="${c}" stroke="${d}" stroke-width="4"/>
+  ${pat}
+  ${eyesG}
+  <ellipse cx="110" cy="106" rx="12" ry="7" fill="#ff9fc4" opacity=".6"/><ellipse cx="202" cy="106" rx="12" ry="7" fill="#ff9fc4" opacity=".6"/>
+  <path d="M150 100 h12 l-6 7z" fill="#ff7fae"/>
+  <path d="M156 107 q-6 10 -14 6 M156 107 q6 10 14 6" stroke="#3a2a3a" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <g stroke="${d}" stroke-width="3" stroke-linecap="round"><path d="M100 98 h-30 M100 108 l-28 8 M212 98 h30 M212 108 l28 8"/></g>
+  ${a}`;
+}
+
+const $=id=>document.getElementById(id);
+let tab="wardrobe";
+
+function render(){
+  const b=breed(),f=furOf(b);
+  $("cat").innerHTML=catSVG(b,f,S.acc,{sleep:S.asleep});
+  $("cat").classList.toggle("sleep",S.asleep);
+  $("nameplate").textContent=`${b.name} the ${b.kind}`;
+  $("coins").textContent=S.coins;
+  $("lvl").textContent=S.lvl;
+  $("lvlname").textContent=`Level ${S.lvl} · ${TITLES[Math.min(TITLES.length-1,Math.floor((S.lvl-1)/2))]}`;
+  $("xptext").textContent=`${S.xp} / ${need(S.lvl)} XP`;
+  $("xpfill").style.width=Math.min(100,S.xp/need(S.lvl)*100)+"%";
+  const nb=BREEDS.find(x=>x.lvl>S.lvl);
+  $("nextunlock").textContent=nb?`Next cat unlocks at level ${nb.lvl}`:"You've found every cat!";
+  $("stats").innerHTML=STATS.map(s=>{const v=Math.round(S.stats[s.id]);return `<div class="stat${v<25?" low":""}"><div class="row"><span>${s.name}</span><span>${v}%</span></div><div class="bar"><i style="width:${v}%;background:${s.color}"></i></div></div>`}).join("");
+  // mood
+  const low=STATS.filter(s=>S.stats[s.id]<25).map(s=>s.id);
+  let m=`${b.name} is purring happily!`;
+  if(S.asleep)m=`Shh... ${b.name} is napping`;
+  else if(low.includes("hunger"))m=`${b.name}'s tummy is rumbling!`;
+  else if(low.includes("energy"))m=`${b.name} is super sleepy`;
+  else if(low.includes("clean"))m=`${b.name} needs a bubble bath`;
+  else if(low.includes("fun"))m=`${b.name} is bored. Let's play!`;
+  else if(Object.values(S.stats).every(v=>v>80))m=`${b.name} loves you so much!`;
+  $("mood").textContent=m;
+  let z=$("stage").querySelector(".zzz");
+  if(S.asleep&&!z){z=document.createElement("div");z.className="zzz";z.textContent="z z z";$("stage").appendChild(z)}
+  if(!S.asleep&&z)z.remove();
+  ["feed","play","bath"].forEach(k=>$("a-"+k).disabled=S.asleep);
+  $("a-sleep").querySelector("b").textContent=S.asleep?"☀️":"🌙";
+  $("a-sleep").lastChild.textContent=S.asleep?"Wake up":"Nap";
+  // wardrobe
+  const curFur=f.id;
+  $("furs").innerHTML=FURS.map(x=>{const lk=x.lvl>S.lvl;return `<button class="chip${lk?" locked":""}" data-fur="${x.id}" aria-pressed="${x.id===curFur}" ${lk?"disabled":""}><span class="sw" style="background:${x.c}"></span>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
+  $("accs").innerHTML=ACCS.map(x=>{const lk=x.lvl>S.lvl;return `<button class="chip${lk?" locked":""}" data-acc="${x.id}" aria-pressed="${x.id===S.acc}" ${lk?"disabled":""}>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
+  $("cats").innerHTML=BREEDS.map(x=>{const lk=x.lvl>S.lvl;return `<button class="catcard${lk?" locked":""}" data-breed="${x.id}" aria-pressed="${x.id===S.breed}" ${lk?"disabled":""}><svg viewBox="0 0 300 260">${catSVG(x,furOf(x),"none")}</svg>${lk?"???":x.name}<small>${lk?"Unlocks at Lv "+x.lvl:x.kind}</small></button>`}).join("");
+}
+
+function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),2600)}
+function fx(ch){const st=$("stage"),e=document.createElement("div");e.className="fx";e.textContent=ch;e.style.left=(35+Math.random()*30)+"%";e.style.top=(35+Math.random()*15)+"%";st.appendChild(e);setTimeout(()=>e.remove(),1300)}
+function bounce(){const c=$("cat");c.classList.remove("bounce");void c.offsetWidth;c.classList.add("bounce")}
+const clamp=v=>Math.max(0,Math.min(100,v));
+
+function gain(xp){
+  // happier cats earn bonus XP
+  const avg=Object.values(S.stats).reduce((a,b)=>a+b,0)/4;
+  xp=Math.round(xp*(avg>70?1.5:1));
+  S.xp+=xp;S.coins+=Math.ceil(xp/2);
+  while(S.xp>=need(S.lvl)){
+    S.xp-=need(S.lvl);S.lvl++;
+    const nb=BREEDS.find(b=>b.lvl===S.lvl);
+    const nf=FURS.filter(f=>f.lvl===S.lvl).map(f=>f.name);
+    const na=ACCS.filter(a=>a.lvl===S.lvl).map(a=>a.name);
+    let msg=`🎉 Level ${S.lvl}!`;
+    if(nb)msg+=` You found a new cat: ${nb.name} the ${nb.kind}!`;
+    else if(nf.length||na.length)msg+=` New in your wardrobe: ${[...nf,...na].join(", ")}`;
+    toast(msg);for(let i=0;i<5;i++)setTimeout(()=>fx(["⭐","💖","✨"][i%3]),i*120);
+  }
+}
+
+const COOL={};
+function act(kind){
+  if(COOL[kind]&&Date.now()<COOL[kind])return;
+  COOL[kind]=Date.now()+700;
+  const s=S.stats;
+  if(kind==="sleep"){
+    S.asleep=!S.asleep;
+    if(!S.asleep&&s.energy>90)gain(8);
+    save();render();return;
+  }
+  if(S.asleep)return;
+  if(kind==="feed"){if(s.hunger>95){toast(`${breed().name} is too full right now`);return}s.hunger=clamp(s.hunger+25);s.clean=clamp(s.clean-4);fx("🐟");gain(6)}
+  if(kind==="play"){if(s.energy<12){toast(`${breed().name} is too tired to play. Try a nap!`);return}s.fun=clamp(s.fun+22);s.energy=clamp(s.energy-10);s.hunger=clamp(s.hunger-6);fx("🧶");gain(8)}
+  if(kind==="bath"){if(s.clean>95){toast(`${breed().name} is already sparkly clean`);return}s.clean=clamp(s.clean+35);s.fun=clamp(s.fun-6);fx("🫧");gain(5)}
+  bounce();save();render();
+}
+["feed","play","bath","sleep"].forEach(k=>$("a-"+k).addEventListener("click",()=>act(k)));
+$("cat").addEventListener("click",()=>{if(S.asleep)return;S.stats.fun=clamp(S.stats.fun+3);fx("💗");bounce();gain(1);save();render()});
+$("cat").style.cursor="pointer";
+
+document.addEventListener("click",e=>{
+  const fb=e.target.closest("[data-fur]");if(fb&&!fb.disabled){S.fur[S.breed]=fb.dataset.fur;save();render();bounce()}
+  const ab=e.target.closest("[data-acc]");if(ab&&!ab.disabled){S.acc=ab.dataset.acc;save();render();bounce()}
+  const bb=e.target.closest("[data-breed]");if(bb&&!bb.disabled){S.breed=bb.dataset.breed;save();render();bounce()}
+});
+function setTab(t){tab=t;$("t-wardrobe").setAttribute("aria-selected",t==="wardrobe");$("t-cats").setAttribute("aria-selected",t==="cats");$("p-wardrobe").hidden=t!=="wardrobe";$("p-cats").hidden=t!=="cats"}
+$("t-wardrobe").onclick=()=>setTab("wardrobe");$("t-cats").onclick=()=>setTab("cats");
+
+function showReset(){
+  const area=$("resetarea");
+  area.innerHTML=`<button class="reset" id="reset">Start over</button>`;
+  $("reset").onclick=()=>{
+    area.innerHTML=`<div class="confirm">Erase your cats and start over? <button id="yes" style="background:var(--pink);color:#fff">Yes, start over</button><button id="no" style="background:#fff">Keep playing</button></div>`;
+    $("yes").onclick=()=>{S=fresh();save();render();showReset();toast("A fresh start with Mochi!")};
+    $("no").onclick=showReset;
+  };
+}
+showReset();
+
+// needs slowly drop over time; napping restores energy
+setInterval(()=>{
+  const s=S.stats;
+  if(S.asleep){s.energy=clamp(s.energy+4);s.hunger=clamp(s.hunger-.5);if(s.energy>=100){S.asleep=false;toast(`${breed().name} woke up feeling great!`);gain(8)}}
+  else{s.hunger=clamp(s.hunger-1);s.fun=clamp(s.fun-1.2);s.clean=clamp(s.clean-.6);s.energy=clamp(s.energy-.7)}
+  save();render();
+},4000);
+
+render();
+</script>
+
+</body>
+</html>
