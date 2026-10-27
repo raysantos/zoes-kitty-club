@@ -202,7 +202,14 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .meters{display:flex;gap:6px;padding:5px}
 .meter{position:relative;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
   background:conic-gradient(var(--c) calc(var(--v)*1%),#fde3ec 0)}
+.meter{border:0;padding:0;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent}
+.meter:active{transform:scale(.92)}
 .meter::before{content:"";position:absolute;inset:4px;border-radius:50%;background:#fff}
+.tip{position:fixed;z-index:9;left:0;top:0;transform:translate(-50%,-4px);opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;background:#fff;color:var(--ink);border-radius:14px;padding:7px 12px;box-shadow:0 3px 0 rgba(246,201,218,.8);display:flex;flex-direction:column;align-items:center;gap:1px;white-space:nowrap}
+.tip.show{opacity:1;transform:translate(-50%,0)}
+.tip::before{content:"";position:absolute;top:-6px;left:calc(50% + var(--ax,0px) - 7px);border:7px solid transparent;border-top:0;border-bottom-color:#fff}
+.tip b{font-weight:900;font-size:.95rem}
+.tip small{color:var(--soft);font-weight:800;font-size:.78rem}
 .meter span{position:relative;font-size:1rem;line-height:1}
 .meter.low{animation:alarm .8s ease-in-out infinite}
 @keyframes alarm{50%{transform:scale(1.15);box-shadow:0 0 0 4px rgba(255,111,165,.35)}}
@@ -361,6 +368,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     <div class="pill coins" title="Fish treats"><span class="coin"></span><span id="coins">0</span></div>
   </div>
 </div>
+<div class="tip" id="tip" role="status"></div>
 
 <nav class="dock pill" id="dock" aria-label="Actions">
   <div class="group" id="g-care">
@@ -447,11 +455,11 @@ const ACCS=[
   {id:"crown",name:"Royal crown",lvl:13}
 ];
 const STATS=[
-  {id:"hunger",name:"Tummy",color:"var(--sun)"},
-  {id:"fun",name:"Fun",color:"var(--mint)"},
-  {id:"clean",name:"Clean",color:"var(--sky)"},
-  {id:"energy",name:"Energy",color:"var(--lilac)"},
-  {id:"potty",name:"Potty",color:"#e8b68a"}
+  {id:"hunger",name:"Tummy",color:"var(--sun)",tip:"Feed to fill it up"},
+  {id:"fun",name:"Fun",color:"var(--mint)",tip:"Play or go to the park"},
+  {id:"clean",name:"Clean",color:"var(--sky)",tip:"Give a bubble bath"},
+  {id:"energy",name:"Energy",color:"var(--lilac)",tip:"Take a nap"},
+  {id:"potty",name:"Potty",color:"#e8b68a",tip:"Use the litter box"}
 ];
 const TITLES=["New Friend","Cuddle Buddy","Purr Pal","Whisker Wizard","Paw Princess","Meow Master","Kitty Queen"];
 const KEY="kitty-cuddle-club-v1";
@@ -539,7 +547,8 @@ const clamp=v=>Math.max(0,Math.min(100,v));
 const pct=()=>Math.min(100,S.xp/need(S.lvl)*100)+"%";
 
 function renderStats(){
-  $("meters").innerHTML=STATS.map(s=>{const v=Math.round(S.stats[s.id]);return `<div class="meter${v<25?" low":""}" style="--v:${v};--c:${s.color}" title="${s.name} ${v}%" role="img" aria-label="${s.name} ${v} percent"><span>${ICONS[s.id]}</span></div>`}).join("");
+  $("meters").innerHTML=STATS.map(s=>{const v=Math.round(S.stats[s.id]);return `<button class="meter${v<25?" low":""}" data-stat="${s.id}" style="--v:${v};--c:${s.color}" aria-label="${s.name} ${v} percent"><span>${ICONS[s.id]}</span></button>`}).join("");
+  if(showTip.id)showTip(showTip.id,true);
   $("meterlist").innerHTML=STATS.map(s=>`<div><span>${ICONS[s.id]} ${s.name}</span><span>${Math.round(S.stats[s.id])}%</span></div>`).join("");
   $("coins").textContent=S.coins;
   $("lvl").textContent=S.lvl;
@@ -694,6 +703,16 @@ function closeSheets(){document.querySelectorAll(".sheet.show").forEach(s=>{s.cl
 function openSheet(id){closeFly();const s=$(id),was=s.classList.contains("show");closeSheets();if(was||BUSY)return;s.classList.add("show");s.setAttribute("aria-hidden","false");$("stage").classList.add("dressing")}
 $("b-style").onclick=()=>openSheet("s-style");
 $("lvlpill").onclick=()=>openSheet("s-cats");
+// tap a need ring: bubble with its name, percent and what fills it
+function showTip(id,refresh){
+  const m=document.querySelector(`.meter[data-stat="${id}"]`),s=STATS.find(x=>x.id===id),t=$("tip");if(!m)return;
+  t.innerHTML=`<b>${ICONS[id]} ${s.name} ${Math.round(S.stats[id])}%</b><small>${s.tip}</small>`;
+  const r=m.getBoundingClientRect(),w=t.offsetWidth||160,x=Math.max(w/2+8,Math.min(innerWidth-w/2-8,r.left+r.width/2));
+  t.style.left=x+"px";t.style.top=(r.bottom+10)+"px";t.style.setProperty("--ax",(r.left+r.width/2-x)+"px");
+  showTip.id=id;t.classList.add("show");if(!refresh){clearTimeout(showTip.t);showTip.t=setTimeout(hideTip,2600)}
+}
+function hideTip(){showTip.id=null;$("tip").classList.remove("show")}
+$("meters").addEventListener("click",e=>{const m=e.target.closest(".meter");if(!m)return;e.stopPropagation();if(showTip.id===m.dataset.stat)hideTip();else showTip(m.dataset.stat)});
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheets);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeFly();closeSheets()}});
 
