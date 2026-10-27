@@ -289,6 +289,11 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .bigbar i{display:block;height:100%;background:repeating-linear-gradient(45deg,var(--pink) 0 10px,#ff8db8 10px 20px);transition:width .4s}
 .meterlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;font-size:.85rem}
 .meterlist div{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.toolbtn{flex:1 1 140px;border:2px solid var(--line);border-radius:14px;padding:10px 12px;background:#fff6f9;color:var(--ink);font:900 .9rem var(--body);cursor:pointer}
+.toolbtn[aria-pressed="true"]{background:#e9fbf5;border-color:var(--mint)}
+.ver{text-align:center;font-size:.8rem}
+.testtag{position:fixed;z-index:9;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(var(--safe-b) + 100px);background:var(--mint);color:#fff;font:900 .75rem var(--body);padding:4px 10px;border-radius:999px;pointer-events:none}
 .reset{align-self:center;background:none;border:0;color:var(--soft);font:700 .8rem var(--body);text-decoration:underline;cursor:pointer}
 .confirm{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;font-size:.85rem}
 .confirm button{border:0;border-radius:999px;padding:6px 12px;font:800 .85rem var(--body);cursor:pointer}
@@ -480,9 +485,15 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   <div class="meterlist" id="meterlist"></div>
   <div class="cats" id="cats"></div>
   <p class="hint">Take great care of your cat to unlock new friends. Your level and outfits are shared by every cat.</p>
+  <div class="tools">
+    <button class="toolbtn" id="updatebtn" type="button">🔄 Update game</button>
+    <button class="toolbtn" id="testbtn" type="button" aria-pressed="false">🧪 Test mode: off</button>
+  </div>
+  <p class="hint ver" id="verline"></p>
   <div id="resetarea" style="display:flex;justify-content:center"></div>
 </section>
 
+<div class="testtag" id="testtag" hidden>🧪 Test mode</div>
 <div class="toast" id="toast" role="status"></div>
 
 <script>
@@ -627,6 +638,9 @@ const $=id=>document.getElementById(id);
 const ICONS={hunger:"🐟",fun:"🧶",clean:"🫧",energy:"⚡",potty:"🚽"};
 let BUSY=false;
 const clamp=v=>Math.max(0,Math.min(100,v));
+const VERSION="1.5";
+let TEST=false;try{TEST=localStorage.getItem("kitty-test")==="1"}catch(e){}
+const locked=x=>!TEST&&x.lvl>S.lvl;
 const pct=()=>Math.min(100,S.xp/need(S.lvl)*100)+"%";
 
 function renderStats(){
@@ -654,6 +668,7 @@ function render(){
   if(document.activeElement!==$("namein"))$("namein").value=nm(b);
   $("lvlname").textContent=`Level ${S.lvl} · ${TITLES[Math.min(TITLES.length-1,Math.floor((S.lvl-1)/2))]}`;
   const nb=BREEDS.find(x=>x.lvl>S.lvl);
+  $("testbtn").textContent=TEST?"🧪 Test mode: on":"🧪 Test mode: off";$("testbtn").setAttribute("aria-pressed",TEST);$("testtag").hidden=!TEST;
   $("nextunlock").textContent=nb?`Next cat unlocks at level ${nb.lvl}`:"You've found every cat!";
   const low=STATS.filter(s=>S.stats[s.id]<25).map(s=>s.id);
   const N=nm(b);
@@ -675,9 +690,9 @@ function render(){
   $("a-sleep").querySelector("b").textContent=S.asleep?"☀️":"🌙";
   $("sleeplabel").textContent=S.asleep?"Wake":"Nap";
   const curFur=f.id;
-  $("furs").innerHTML=FURS.map(x=>{const lk=x.lvl>S.lvl;return `<button class="chip${lk?" locked":""}" data-fur="${x.id}" aria-pressed="${x.id===curFur}" ${lk?"disabled":""}><span class="sw" style="background:${x.c}"></span>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
-  $("accs").innerHTML=ACCS.map(x=>{const lk=x.lvl>S.lvl;return `<button class="chip${lk?" locked":""}" data-acc="${x.id}" aria-pressed="${x.id===S.acc}" ${lk?"disabled":""}>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
-  $("cats").innerHTML=BREEDS.map(x=>{const lk=x.lvl>S.lvl;return `<button class="catcard${lk?" locked":""}" data-breed="${x.id}" aria-pressed="${x.id===S.breed}" ${lk?"disabled":""}><svg viewBox="0 0 300 260">${catSVG(x,furOf(x),"none",{uid:"c"+x.id})}</svg>${lk?"???":esc(nm(x))}<small>${lk?"Unlocks at Lv "+x.lvl:x.kind}</small></button>`}).join("");
+  $("furs").innerHTML=FURS.map(x=>{const lk=locked(x);return `<button class="chip${lk?" locked":""}" data-fur="${x.id}" aria-pressed="${x.id===curFur}" ${lk?"disabled":""}><span class="sw" style="background:${x.c}"></span>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
+  $("accs").innerHTML=ACCS.map(x=>{const lk=locked(x);return `<button class="chip${lk?" locked":""}" data-acc="${x.id}" aria-pressed="${x.id===S.acc}" ${lk?"disabled":""}>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
+  $("cats").innerHTML=BREEDS.map(x=>{const lk=locked(x);return `<button class="catcard${lk?" locked":""}" data-breed="${x.id}" aria-pressed="${x.id===S.breed}" ${lk?"disabled":""}><svg viewBox="0 0 300 260">${catSVG(x,furOf(x),"none",{uid:"c"+x.id})}</svg>${lk?"???":esc(nm(x))}<small>${lk?"Unlocks at Lv "+x.lvl:x.kind}</small></button>`}).join("");
 }
 
 function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),2800)}
@@ -832,6 +847,18 @@ function showReset(){
   };
 }
 showReset();
+$("verline").textContent=`Version ${VERSION}`;
+$("updatebtn").onclick=()=>{save();toast("Getting the newest version...");setTimeout(()=>location.replace(location.pathname+"?v="+Date.now()),400)};
+$("testbtn").onclick=()=>{
+  TEST=!TEST;try{TEST?localStorage.setItem("kitty-test","1"):localStorage.removeItem("kitty-test")}catch(e){}
+  if(!TEST){
+    if(BREEDS.find(b=>b.id===S.breed).lvl>S.lvl)S.breed="mochi";
+    if((ACCS.find(a=>a.id===S.acc)||{lvl:1}).lvl>S.lvl)S.acc="none";
+    Object.keys(S.fur).forEach(k=>{const f=FURS.find(x=>x.id===S.fur[k]);if(f&&f.lvl>S.lvl)delete S.fur[k]});
+    save();
+  }
+  render();toast(TEST?"Test mode on: everything is unlocked":"Test mode off: back to your real unlocks");
+};
 
 // needs slowly drop over time; napping restores energy
 setInterval(()=>{
