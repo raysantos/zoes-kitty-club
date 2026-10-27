@@ -283,9 +283,6 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   <div class="group">
     <button class="dbtn" id="b-style" style="--tint:#ffd6e7"><b>🎀</b>Style</button>
   </div>
-  <div class="group">
-    <button class="dbtn" id="b-cats" style="--tint:#fff1c2"><b>🐱</b>Cats</button>
-  </div>
 </nav>
 
 <section class="sheet" id="s-style" aria-label="Wardrobe" aria-hidden="true">
@@ -543,7 +540,6 @@ document.addEventListener("pointerdown",e=>{if(!e.target.closest(".group"))close
 function closeSheets(){document.querySelectorAll(".sheet.show").forEach(s=>{s.classList.remove("show");s.setAttribute("aria-hidden","true")});$("stage").classList.remove("dressing")}
 function openSheet(id){closeFly();const s=$(id),was=s.classList.contains("show");closeSheets();if(was||BUSY)return;s.classList.add("show");s.setAttribute("aria-hidden","false");$("stage").classList.add("dressing")}
 $("b-style").onclick=()=>openSheet("s-style");
-$("b-cats").onclick=()=>openSheet("s-cats");
 $("lvlpill").onclick=()=>openSheet("s-cats");
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheets);
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeFly();closeSheets()}});
