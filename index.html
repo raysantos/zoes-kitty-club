@@ -169,6 +169,8 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 /* ---------- dock & fly-outs ---------- */
 .dock{position:fixed;z-index:9;left:50%;transform:translateX(-50%);bottom:calc(var(--safe-b) + 12px);display:flex;gap:6px;padding:6px;max-width:calc(100vw - 24px)}
 .group{position:relative}
+.dock.sleeping .group:not(.napgroup){display:none}
+.dock.sleeping .napgroup .dbtn{width:96px}
 .dbtn{width:60px;height:62px;border:0;border-radius:22px;cursor:pointer;color:var(--ink);background:var(--tint,#fff);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;font:900 .68rem var(--body);box-shadow:0 4px 0 rgba(91,42,74,.15);transition:transform .12s}
 .dbtn b{font-size:1.55rem;line-height:1.15}
 .dbtn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(91,42,74,.15)}
@@ -277,7 +279,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
       <button class="sub" id="a-park" style="--tint:#d6f2b8"><b>🌳</b>Park</button>
     </div>
   </div>
-  <div class="group">
+  <div class="group napgroup">
     <button class="dbtn" id="a-sleep" style="--tint:#e3d9ff"><b>🌙</b><span id="sleeplabel">Nap</span></button>
   </div>
   <div class="group">
@@ -435,6 +437,7 @@ function render(){
   if(!S.asleep&&z)z.remove();
   ["b-care","b-fun","a-feed","a-play","a-bath","a-potty","a-park"].forEach(k=>$(k).disabled=S.asleep);
   if(S.asleep)closeFly();
+  $("dock").classList.toggle("sleeping",S.asleep);
   $("a-sleep").querySelector("b").textContent=S.asleep?"☀️":"🌙";
   $("sleeplabel").textContent=S.asleep?"Wake":"Nap";
   const curFur=f.id;
@@ -514,7 +517,7 @@ function act(kind){
   COOL[kind]=Date.now()+700;
   const s=S.stats,n=breed().name;
   if(kind==="sleep"){if(BUSY)return;
-    S.asleep=!S.asleep;
+    S.asleep=!S.asleep;if(S.asleep)closeSheets();
     if(!S.asleep&&s.energy>90)gain(8);
     save();render();return;
   }
