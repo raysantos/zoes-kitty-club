@@ -51,6 +51,33 @@ h1{font-family:var(--display);font-weight:400;font-size:2rem;margin:0;color:var(
 #cat{position:absolute;left:50%;bottom:11%;width:62%;transform:translateX(-50%);transform-origin:50% 100%}
 #cat.bounce{animation:bounce .6s ease}
 #cat.sleep{filter:saturate(.75)}
+#cat{z-index:2;transition:bottom .7s cubic-bezier(.3,1.4,.5,1),width .7s ease,left .7s ease}
+#cat.inbath{bottom:24%;width:46%}
+#cat.inbath .tail{animation:none;opacity:0}
+#cat.pounce{animation:pounce .9s ease}
+#cat.roll{animation:roll 1s ease}
+#cat.chase{animation:chase 1.6s ease-in-out}
+@keyframes pounce{0%,100%{transform:translateX(-50%)}25%{transform:translateX(-50%) scale(1.1,.85)}55%{transform:translateX(-30%) translateY(-60px) rotate(12deg)}80%{transform:translateX(-25%) scale(1.05,.9)}}
+@keyframes roll{0%{transform:translateX(-50%) rotate(0)}50%{transform:translateX(-50%) translateY(-30px) rotate(-180deg)}100%{transform:translateX(-50%) rotate(-360deg)}}
+@keyframes chase{0%,100%{transform:translateX(-50%) scaleX(1)}25%{transform:translateX(-90%) translateY(-14px) scaleX(-1)}50%{transform:translateX(-10%) scaleX(-1)}75%{transform:translateX(-10%) translateY(-14px) scaleX(1)}}
+.toy{position:absolute;z-index:3;width:13%;aspect-ratio:1;bottom:12%;pointer-events:none}
+.toy.rollin{animation:toyroll 1.6s ease-in-out forwards}
+.toy.toss{animation:toss 1s ease-out forwards}
+@keyframes toyroll{0%{left:-15%;transform:rotate(0)}55%{left:55%;transform:rotate(540deg)}100%{left:110%;transform:rotate(900deg)}}
+@keyframes toss{0%{left:20%;bottom:12%}50%{left:48%;bottom:62%}100%{left:76%;bottom:12%;opacity:.9}}
+.tub{position:absolute;left:50%;bottom:6%;width:78%;transform:translate(-50%,130%);transition:transform .6s cubic-bezier(.3,1.3,.5,1);pointer-events:none}
+.tub.show{transform:translate(-50%,0)}
+.tub.back{z-index:1}.tub.front{z-index:3}
+.stage.bathing{background:linear-gradient(#dff3ff 0 68%,#bfe6f7 68%)}
+.stage.bathing .window,.stage.bathing .shelf,.stage.bathing .plant{opacity:.35;transition:opacity .4s}
+.stage{transition:background .4s}
+.bubble{position:absolute;z-index:4;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle at 32% 30%,#fff 0 12%,rgba(255,255,255,.35) 13% 45%,rgba(182,156,255,.35) 70%,rgba(124,198,255,.55) 100%);
+  border:1.5px solid rgba(255,255,255,.9);box-shadow:inset -3px -3px 6px rgba(255,111,165,.25);animation:rise var(--t,2.4s) ease-out forwards}
+@keyframes rise{0%{transform:translate(0,0) scale(.3);opacity:0}15%{opacity:1}50%{transform:translate(var(--dx,10px),-60px) scale(1)}100%{transform:translate(calc(var(--dx,10px)*-1),-150px) scale(1.1);opacity:0}}
+.bubble.pop{animation:pop .25s ease-out forwards}
+@keyframes pop{to{transform:scale(1.8);opacity:0}}
+.stage.bathing{cursor:pointer}
 @keyframes bounce{0%,100%{transform:translateX(-50%) scale(1)}30%{transform:translateX(-50%) scale(1.08,.9)}60%{transform:translateX(-50%) scale(.95,1.08) translateY(-10px)}}
 .tail{transform-origin:150px 205px;animation:wag 2.4s ease-in-out infinite}
 @keyframes wag{50%{transform:rotate(-10deg)}}
@@ -121,7 +148,15 @@ h1{font-family:var(--display);font-weight:400;font-size:2rem;margin:0;color:var(
   <div class="stage" id="stage">
     <div class="window"></div><div class="shelf"></div><div class="plant"></div>
     <div class="mood" id="mood">Mochi is happy!</div>
+    <svg class="tub back" id="tubback" viewBox="0 0 300 150" aria-hidden="true"><ellipse cx="150" cy="40" rx="140" ry="28" fill="#c9e8ff" stroke="#fff" stroke-width="6"/><ellipse cx="150" cy="44" rx="124" ry="18" fill="#9fd6ff"/></svg>
     <svg id="cat" viewBox="0 0 300 260" aria-label="Your cat"></svg>
+    <svg class="tub front" id="tubfront" viewBox="0 0 300 150" aria-hidden="true">
+      <g fill="#fff"><circle cx="40" cy="44" r="18"/><circle cx="70" cy="36" r="22"/><circle cx="104" cy="44" r="16"/><circle cx="196" cy="42" r="18"/><circle cx="228" cy="34" r="22"/><circle cx="262" cy="44" r="16"/><circle cx="150" cy="46" r="14"/></g>
+      <path d="M10 44 H290 Q286 128 220 132 H80 Q14 128 10 44Z" fill="#ffffff" stroke="#f6c9da" stroke-width="5"/>
+      <path d="M30 70 H270" stroke="#ffd1e3" stroke-width="10" stroke-linecap="round"/>
+      <rect x="66" y="128" width="14" height="18" rx="6" fill="#ffc94a"/><rect x="220" y="128" width="14" height="18" rx="6" fill="#ffc94a"/>
+      <g transform="translate(240 8)"><ellipse cx="14" cy="26" rx="16" ry="10" fill="#ffc94a"/><circle cx="22" cy="12" r="10" fill="#ffc94a"/><path d="M30 12 l8 2 -8 3z" fill="#ff8a3d"/><circle cx="24" cy="10" r="2" fill="#3a2a3a"/></g>
+    </svg>
     <div class="nameplate" id="nameplate">Mochi</div>
   </div>
 
@@ -253,7 +288,8 @@ function catSVG(b,fur,acc,opts={}){
 const $=id=>document.getElementById(id);
 let tab="wardrobe";
 
-function render(){
+function renderStats(){$("stats").innerHTML=STATS.map(s=>{const v=Math.round(S.stats[s.id]);return `<div class="stat${v<25?" low":""}"><div class="row"><span>${s.name}</span><span>${v}%</span></div><div class="bar"><i style="width:${v}%;background:${s.color}"></i></div></div>`}).join("");$("coins").textContent=S.coins;$("xptext").textContent=`${S.xp} / ${need(S.lvl)} XP`;$("xpfill").style.width=Math.min(100,S.xp/need(S.lvl)*100)+"%";$("lvl").textContent=S.lvl}
+function render(){if(typeof BUSY!=="undefined"&&BUSY){renderStats();return}
   const b=breed(),f=furOf(b);
   $("cat").innerHTML=catSVG(b,f,S.acc,{sleep:S.asleep});
   $("cat").classList.toggle("sleep",S.asleep);
@@ -291,6 +327,32 @@ function render(){
 
 function toast(t){const el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),2600)}
 function fx(ch){const st=$("stage"),e=document.createElement("div");e.className="fx";e.textContent=ch;e.style.left=(35+Math.random()*30)+"%";e.style.top=(35+Math.random()*15)+"%";st.appendChild(e);setTimeout(()=>e.remove(),1300)}
+let BUSY=false;
+function anim(cls,ms){const c=$("cat");["bounce","pounce","roll","chase"].forEach(k=>c.classList.remove(k));void c.offsetWidth;c.classList.add(cls);setTimeout(()=>c.classList.remove(cls),ms)}
+function bubble(x,y,size){const st=$("stage"),b=document.createElement("div");b.className="bubble";const r=size||14+Math.random()*30;b.style.width=b.style.height=r+"px";b.style.left=(x-r/2)+"px";b.style.top=(y-r/2)+"px";b.style.setProperty("--dx",(Math.random()*30-15)+"px");b.style.setProperty("--t",(1.8+Math.random()*1.4)+"s");st.appendChild(b);b.addEventListener("animationend",()=>b.remove());return b}
+function bubbleBurst(n,cx,cy){const st=$("stage").getBoundingClientRect();for(let i=0;i<n;i++)setTimeout(()=>bubble((cx??st.width*(.3+Math.random()*.4))+(Math.random()*40-20),(cy??st.height*.62)+(Math.random()*20-10)),i*60)}
+function toy(kind){const st=$("stage"),t=document.createElement("div");t.className="toy "+kind;
+  t.innerHTML=`<svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#ff6fa5"/><path d="M6 14 Q20 24 34 12 M4 22 Q20 32 36 20 M12 5 Q16 20 10 34 M24 3 Q30 20 26 37" stroke="#ffd1e3" stroke-width="2.5" fill="none"/><path d="M36 26 q10 6 4 14" stroke="#ff6fa5" stroke-width="2.5" fill="none"/></svg>`;
+  st.appendChild(t);t.addEventListener("animationend",()=>t.remove())}
+function playAnim(){const r=Math.floor(Math.random()*3);
+  if(r===0){toy("rollin");setTimeout(()=>anim("pounce",900),500)}
+  else if(r===1){toy("toss");anim("chase",1600)}
+  else{anim("roll",1000);setTimeout(()=>fx("💫"),400)}
+}
+function startBath(){
+  BUSY=true;const st=$("stage"),c=$("cat");
+  st.classList.add("bathing");$("tubback").classList.add("show");$("tubfront").classList.add("show");
+  setTimeout(()=>c.classList.add("inbath"),250);
+  $("mood").textContent=`Splish splash! Tap to make bubbles`;
+  let n=0;const iv=setInterval(()=>{bubbleBurst(2);if(++n>=14)clearInterval(iv)},300);
+  setTimeout(()=>{c.classList.remove("inbath");setTimeout(()=>{$("tubback").classList.remove("show");$("tubfront").classList.remove("show");st.classList.remove("bathing");BUSY=false;render();fx("✨")},500)},5000);
+}
+$("stage").addEventListener("pointerdown",e=>{
+  if(!$("stage").classList.contains("bathing"))return;
+  const r=$("stage").getBoundingClientRect();bubbleBurst(4,e.clientX-r.left,e.clientY-r.top);
+  S.stats.clean=clamp(S.stats.clean+1);
+});
+$("stage").addEventListener("click",e=>{const b=e.target.closest(".bubble");if(b)b.classList.add("pop")});
 function bounce(){const c=$("cat");c.classList.remove("bounce");void c.offsetWidth;c.classList.add("bounce")}
 const clamp=v=>Math.max(0,Math.min(100,v));
 
@@ -316,19 +378,19 @@ function act(kind){
   if(COOL[kind]&&Date.now()<COOL[kind])return;
   COOL[kind]=Date.now()+700;
   const s=S.stats;
-  if(kind==="sleep"){
+  if(kind==="sleep"){if(BUSY)return;
     S.asleep=!S.asleep;
     if(!S.asleep&&s.energy>90)gain(8);
     save();render();return;
   }
-  if(S.asleep)return;
+  if(S.asleep||BUSY)return;
   if(kind==="feed"){if(s.hunger>95){toast(`${breed().name} is too full right now`);return}s.hunger=clamp(s.hunger+25);s.clean=clamp(s.clean-4);fx("🐟");gain(6)}
-  if(kind==="play"){if(s.energy<12){toast(`${breed().name} is too tired to play. Try a nap!`);return}s.fun=clamp(s.fun+22);s.energy=clamp(s.energy-10);s.hunger=clamp(s.hunger-6);fx("🧶");gain(8)}
-  if(kind==="bath"){if(s.clean>95){toast(`${breed().name} is already sparkly clean`);return}s.clean=clamp(s.clean+35);s.fun=clamp(s.fun-6);fx("🫧");gain(5)}
+  if(kind==="play"){if(s.energy<12){toast(`${breed().name} is too tired to play. Try a nap!`);return}s.fun=clamp(s.fun+22);s.energy=clamp(s.energy-10);s.hunger=clamp(s.hunger-6);playAnim();gain(8);save();render();return}
+  if(kind==="bath"){if(s.clean>95){toast(`${breed().name} is already sparkly clean`);return}s.clean=clamp(s.clean+35);s.fun=clamp(s.fun-6);bubbleBurst(10);startBath();gain(5);save();renderStats();return}
   bounce();save();render();
 }
 ["feed","play","bath","sleep"].forEach(k=>$("a-"+k).addEventListener("click",()=>act(k)));
-$("cat").addEventListener("click",()=>{if(S.asleep)return;S.stats.fun=clamp(S.stats.fun+3);fx("💗");bounce();gain(1);save();render()});
+$("cat").addEventListener("click",()=>{if(S.asleep||BUSY)return;S.stats.fun=clamp(S.stats.fun+3);fx("💗");bounce();gain(1);save();render()});
 $("cat").style.cursor="pointer";
 
 document.addEventListener("click",e=>{
