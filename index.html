@@ -366,16 +366,14 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   .bigbar{height:16px}
   .stage.dressing #cat{bottom:calc(min(52vh,560px) + 8px);width:min(40vw,26vh,340px)}
 }
-/* landscape tablets: panels slide in from the side so the cat stays big */
+/* landscape tablets: panels slide in from the side; the cat stays put, only the dock shifts clear of the panel */
 @media (min-width:900px) and (min-height:600px) and (min-aspect-ratio:5/4){
   .sheet{left:auto;right:0;top:0;bottom:0;width:min(440px,40vw);max-height:none;margin:0;border-radius:32px 0 0 32px;box-shadow:-6px 0 0 var(--line);
     padding:calc(var(--safe-t) + 24px) max(28px,env(safe-area-inset-right,0px)) calc(var(--safe-b) + 24px) 28px;transform:translateX(105%)}
   .sheet.show{transform:none}
   .sheet .grab{display:none}
-  .stage.dressing #cat{left:calc((100vw - min(440px,40vw))/2);bottom:calc(var(--dock) + 2px);width:min(var(--catw),calc((100vw - min(440px,40vw))*.6))}
+  .stage.dressing #cat{bottom:calc(var(--dock) + 2px);width:var(--catw)}
   .dock{transition:left .35s}
-  .rug{transition:left .7s,opacity .4s}
-  .stage.dressing .rug{left:calc((100vw - min(440px,40vw))/2)}
   body:has(.sheet.show) .dock{left:calc((100vw - min(440px,40vw))/2)}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
