@@ -68,7 +68,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .stage.night .wcloud{opacity:0}
 .stage.park .rm,.stage.potty .rm,.stage.park .rmbg,.stage.potty .rmbg,.stage.bathing .rmbg{opacity:0}
 .stage.bathing .rm{opacity:.35}
-@media (max-height:600px){.frame{display:none}}
+@media (max-height:600px){.frame{display:none}:root{--catw:min(62vw,38vh,400px)}}
 .stage .window{position:absolute;left:8%;top:var(--wt);width:var(--ww);aspect-ratio:1;border-radius:14px;background:var(--sky);border:6px solid #fff;box-shadow:0 0 0 2px var(--line);overflow:hidden;transition:background 1.2s,opacity .4s}
 .stage .window::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 46%,#fff 46% 54%,transparent 54%),linear-gradient(transparent 46%,#fff 46% 54%,transparent 54%)}
 .stage .shelf{position:absolute;right:8%;top:var(--st);width:min(26vw,22vh);height:8px;border-radius:4px;background:#e8b68a;box-shadow:0 3px 0 #d39a66;transition:opacity .4s}
@@ -132,7 +132,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 #cat.sleep .ear{animation:none}
 /* curled nap: slow breathing, head rises with it */
 #cat.sleep .curl .head{animation:none;transform:none}
-#cat .cbody{transform-box:view-box;transform-origin:130px 222px;animation:snooze 4.8s ease-in-out infinite}
+#cat .cbody{transform-box:view-box;transform-origin:140px 224px;animation:snooze 4.8s ease-in-out infinite}
 #cat .chead{animation:headrise 4.8s ease-in-out infinite}
 @keyframes snooze{50%{transform:scale(1.025,1.06)}}
 @keyframes headrise{50%{transform:translateY(-3px)}}
@@ -223,12 +223,13 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 /* ---------- HUD ---------- */
 .hud{position:fixed;z-index:8;left:0;right:0;top:0;padding-top:calc(var(--safe-t) + 10px);padding-left:var(--gl);padding-right:var(--gr);display:flex;flex-direction:column;gap:8px;pointer-events:none}
 .hud>*{pointer-events:auto}
-/* centered: name + coins on top, rings below; one row when wide. ::after is the line break (negative margin eats the extra gap) */
-.hudrow{--hg:8px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:var(--hg)}
-.hudrow::after{content:"";order:1;flex-basis:100%;margin-top:calc(-1*var(--hg))}
-.lvlpill{max-width:calc(100% - 96px)}.coins{flex:none}.meters{order:2}
+/* centered: name pill with the needs pill tucked under it (slides out on load), coins beside */
+.hudrow{display:flex;justify-content:center;align-items:flex-start;gap:8px}
+.namestack{display:flex;flex-direction:column;align-items:center;min-width:0;max-width:calc(100% - 96px)}
+.lvlpill{position:relative;z-index:2;max-width:100%}.coins{flex:none;margin-top:6px}
+.meters{position:relative;z-index:1;margin-top:-18px;animation:slideout .5s cubic-bezier(.3,1.4,.5,1) .25s backwards}
+@keyframes slideout{from{transform:translateY(-60%);opacity:0}}
 /* level pill and need rings share one row when there's room */
-@media (min-width:640px) and (max-height:599.98px),(min-width:900px){.hudrow::after{display:none}.meters{order:0}.lvlpill{max-width:none}}
 .pill{background:var(--glass);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:999px;box-shadow:0 3px 0 rgba(246,201,218,.8)}
 .lvlpill{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;min-width:0;flex:0 1 auto;border:0;cursor:pointer;color:var(--ink);text-align:left}
 .badge{flex:none;width:38px;height:38px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-family:var(--display);font-size:1.25rem;box-shadow:inset 0 -3px 0 #e04e88}
@@ -238,7 +239,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .xpbar i{display:block;height:100%;border-radius:999px;background:var(--pink);transition:width .4s}
 .coins{padding:6px 12px;font-weight:900;font-variant-numeric:tabular-nums;display:flex;gap:6px;align-items:center}
 .coin{width:16px;height:16px;border-radius:50%;background:var(--sun);box-shadow:inset -2px -2px 0 #e9a817}
-.meters{display:flex;gap:6px;padding:5px}
+.meters{display:flex;gap:6px;padding:23px 5px 5px}
 .meter{position:relative;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;
   background:conic-gradient(var(--c) calc(var(--v)*1%),#fde3ec 0)}
 .meter{border:0;padding:0;cursor:pointer;font:inherit;-webkit-tap-highlight-color:transparent}
@@ -320,14 +321,15 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 @media (min-width:700px) and (min-height:600px){
   :root{--dock:calc(var(--safe-b) + 128px);--catw:min(60vw,46vh,560px);--tubw:min(80vw,62vh,720px);--boxw:min(76vw,58vh,660px)}
   .hud{padding-top:calc(var(--safe-t) + 18px);padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));gap:12px}
-  .hudrow{--hg:12px}
+  .hudrow{gap:12px}
+  .coins{margin-top:8px}
   .lvlpill{gap:12px;padding:6px 20px 6px 6px}
   .badge{width:54px;height:54px;font-size:1.7rem}
   .catname{font-size:1.2rem;max-width:50vw}
   .xpbar{width:240px;height:10px}
   .coins{padding:10px 18px;font-size:1.25rem;gap:8px}
   .coin{width:22px;height:22px}
-  .meters{gap:10px;padding:7px}
+  .meters{gap:10px;padding:7px;margin-top:-24px;padding-top:31px}
   .meter{width:52px;height:52px}
   .meter::before{inset:5px}
   .meter span{font-size:1.55rem}
@@ -441,11 +443,13 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 <div class="hud">
   <h1 class="title">Zoe’s Kitty Club</h1>
   <div class="hudrow">
+    <div class="namestack">
     <button class="pill lvlpill" id="lvlpill" aria-label="Level and cat collection">
       <span class="badge" id="lvl">1</span>
       <span class="lvltext"><span class="catname" id="nameplate">Mochi</span><span class="xpbar"><i id="xpfill" style="width:0"></i></span></span>
     </button>
     <div class="pill meters" id="meters" aria-label="Your cat's needs"></div>
+    </div>
     <div class="pill coins" title="Fish treats"><span class="coin"></span><span id="coins">0</span></div>
   </div>
 </div>
@@ -620,11 +624,11 @@ function catSVG(b,fur,acc,opts={}){
     // curled up on a cushion: body loaf on the left, tail wrapped round the front, head resting on paws at the right
     const tailC=b.pattern==="points"?"#6b4a38":b.pattern==="calico"?"#f6a04d":`url(#fb${u})`;
     const pawC=b.pattern==="tux"?"#fff":b.pattern==="points"?"#8a6650":c;
-    const body="M60 196 C52 160 90 132 134 132 C180 132 208 156 206 190 C204 214 170 222 130 222 C92 222 64 216 60 196Z";
+    const body="M70 194 C60 146 98 112 142 112 C188 112 214 146 210 188 C208 216 176 224 138 224 C100 224 74 218 70 194Z";
     let cb="";
-    if(b.pattern==="tabby")cb=`<g fill="${d}" opacity=".85"><path d="M104 136 q6 14 2 28 q10-12 8-29z"/><path d="M132 132 q6 16 2 30 q10-14 8-30z"/><path d="M160 136 q4 14 0 26 q10-12 8-26z"/></g>`;
-    if(b.pattern==="calico")cb=`<clipPath id="cc${u}"><path d="${body}"/></clipPath><g clip-path="url(#cc${u})"><path d="M40 120 L112 120 C118 140 104 156 110 176 C114 196 96 210 88 230 L40 230Z" fill="#f6a04d"/><path d="M140 120 L216 120 L216 168 C196 170 176 162 164 150 C154 140 146 132 140 120Z" fill="#3f3536"/></g>`;
-    if(b.pattern==="clown")cb=`<clipPath id="cc${u}"><path d="${body}"/></clipPath><g clip-path="url(#cc${u})"><circle cx="76" cy="160" r="15" fill="#ff6fa5"/><circle cx="128" cy="140" r="13" fill="#62d2b4"/><circle cx="182" cy="160" r="14" fill="#ffc94a"/><circle cx="104" cy="200" r="11" fill="#7cc6ff"/><circle cx="160" cy="196" r="10" fill="#b69cff"/></g>`;
+    if(b.pattern==="tabby")cb=`<g fill="${d}" opacity=".85"><path d="M108 120 q6 16 2 32 q10-14 8-33z"/><path d="M138 112 q6 18 2 34 q10-16 8-34z"/><path d="M168 118 q4 16 0 30 q10-14 8-30z"/></g>`;
+    if(b.pattern==="calico")cb=`<clipPath id="cc${u}"><path d="${body}"/></clipPath><g clip-path="url(#cc${u})"><path d="M40 100 L116 100 C122 124 106 146 112 170 C116 194 98 210 90 230 L40 230Z" fill="#f6a04d"/><path d="M146 100 L220 100 L220 168 C196 170 176 162 164 150 C154 140 146 132 140 120Z" fill="#3f3536"/></g>`;
+    if(b.pattern==="clown")cb=`<clipPath id="cc${u}"><path d="${body}"/></clipPath><g clip-path="url(#cc${u})"><circle cx="82" cy="152" r="15" fill="#ff6fa5"/><circle cx="134" cy="126" r="13" fill="#62d2b4"/><circle cx="186" cy="152" r="14" fill="#ffc94a"/><circle cx="104" cy="200" r="11" fill="#7cc6ff"/><circle cx="160" cy="196" r="10" fill="#b69cff"/></g>`;
     if(b.pattern==="galaxy")cb=`<g fill="#fff"><circle cx="96" cy="160" r="3"/><circle cx="150" cy="148" r="2.5"/><circle cx="120" cy="196" r="2"/><path class="twk" d="M176 170 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>`;
     const paw=x=>`<ellipse cx="${x}" cy="214" rx="15" ry="9" fill="${pawC}" ${st}/><path d="M${x-4} 219 v-4 M${x+4} 219 v-4" stroke="${line}" stroke-width="2" stroke-linecap="round"/>`;
     return `${defs}
@@ -636,12 +640,12 @@ function catSVG(b,fur,acc,opts={}){
     <g class="cbody">
       <path d="${body}" fill="url(#fb${u})" ${st}/>
       ${cb}
-      <path d="M80 198 C82 172 110 160 134 174" stroke="${line}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <path d="M64 200 C70 224 124 230 172 222 C188 219 198 216 206 210" stroke="${line}" stroke-width="22" fill="none" stroke-linecap="round"/>
-      <path d="M64 200 C70 224 124 230 172 222 C188 219 198 216 206 210" stroke="${tailC}" stroke-width="15" fill="none" stroke-linecap="round"/>
+      <path d="M86 198 C86 164 116 150 140 168" stroke="${line}" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M72 202 C78 226 128 230 174 222 C190 219 200 216 208 210" stroke="${line}" stroke-width="22" fill="none" stroke-linecap="round"/>
+      <path d="M72 202 C78 226 128 230 174 222 C190 219 200 216 208 210" stroke="${tailC}" stroke-width="15" fill="none" stroke-linecap="round"/>
     </g>
     ${paw(200)}${paw(234)}
-    <g class="chead"><g transform="translate(220 170) rotate(-10) scale(.62) translate(-156 -90)">${head}</g></g>
+    <g class="chead"><g transform="translate(222 164) rotate(-10) scale(.68) translate(-156 -90)">${head}</g></g>
   </g>`;
   }
   if(opts.walk){
