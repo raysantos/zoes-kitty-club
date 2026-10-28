@@ -121,6 +121,8 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 #cat .blink{transform-box:fill-box;transform-origin:center;animation:blink 4.2s infinite}
 #cat .whisk{transform-box:view-box;transform-origin:156px 104px;animation:whisk 3s ease-in-out infinite}
 @keyframes whisk{50%{transform:scaleX(1.05)}}
+#cat .honk{transform-box:fill-box;transform-origin:center;animation:honk 2.4s ease-in-out infinite}
+@keyframes honk{0%,80%,100%{transform:scale(1)}86%{transform:scale(1.25)}92%{transform:scale(.92)}}
 #cat .bell{transform-box:view-box;transform-origin:156px 146px;animation:ding 1.8s ease-in-out infinite}
 @keyframes ding{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}}
 .twk{transform-box:fill-box;transform-origin:center;animation:twinkle 2s ease-in-out infinite}
@@ -501,6 +503,7 @@ const BREEDS=[
   {id:"mochi",name:"Mochi",kind:"Snowball Kitten",lvl:1,pattern:"none",fur:"cream"},
   {id:"tiger",name:"Tiger Lily",kind:"Tabby",lvl:3,pattern:"tabby",fur:"ginger"},
   {id:"pearl",name:"Pearl",kind:"Siamese",lvl:5,pattern:"points",fur:"cream"},
+  {id:"bobo",name:"Bobo",kind:"Clown Cat",lvl:6,pattern:"clown",fur:"snow"},
   {id:"patches",name:"Patches",kind:"Calico",lvl:7,pattern:"calico",fur:"snow"},
   {id:"luna",name:"Luna",kind:"Tuxedo",lvl:9,pattern:"tux",fur:"midnight"},
   {id:"stella",name:"Stella",kind:"Galaxy Cat",lvl:12,pattern:"galaxy",fur:"lilac"}
@@ -559,6 +562,7 @@ function catSVG(b,fur,acc,opts={}){
   if(b.pattern==="points"){ph=`<ellipse cx="156" cy="108" rx="36" ry="28" fill="#8a6650" opacity=".5"/><path d="M93 60 L101 8 L138 38Z M219 60 L211 8 L174 38Z" fill="#6b4a38" opacity=".85"/>`;pb=`<ellipse cx="124" cy="240" rx="20" ry="12" fill="#6b4a38" opacity=".6"/><ellipse cx="188" cy="240" rx="20" ry="12" fill="#6b4a38" opacity=".6"/>`}
   if(b.pattern==="calico"){ph=`<path d="M96 46 q22-26 52-6 q-8 30-48 26z" fill="#ffa95a"/><path d="M168 42 q34-10 48 26 q-30 8-48-26z" fill="#4a3f3f"/>`;pb=`<ellipse cx="122" cy="176" rx="24" ry="17" fill="#ffa95a"/><ellipse cx="192" cy="200" rx="20" ry="15" fill="#4a3f3f"/>`}
   if(b.pattern==="tux"){ph=`<path d="M156 90 q-34 10-30 36 q30 16 60 0 q4-26-30-36z" fill="#fff"/>`;pb=`<ellipse cx="156" cy="194" rx="32" ry="42" fill="#fff"/><ellipse cx="124" cy="240" rx="20" ry="12" fill="#fff"/><ellipse cx="188" cy="240" rx="20" ry="12" fill="#fff"/>`}
+  if(b.pattern==="clown"){ph=`<path d="M128 50 L141 84 L128 118 L115 84Z M184 50 L197 84 L184 118 L171 84Z" fill="#7cc6ff" opacity=".75"/><path d="M128 106 q28 34 56 0 q-28 18 -56 0Z" fill="#ff4d6d" opacity=".85"/><g stroke="#fff" stroke-width="2"><circle cx="88" cy="64" r="11" fill="#ff6fa5"/><circle cx="80" cy="82" r="10" fill="#ffc94a"/><circle cx="84" cy="100" r="9" fill="#62d2b4"/><circle cx="224" cy="64" r="11" fill="#7cc6ff"/><circle cx="232" cy="82" r="10" fill="#b69cff"/><circle cx="228" cy="100" r="9" fill="#ff6fa5"/></g>`;pb=`<g><circle cx="112" cy="172" r="8" fill="#ff6fa5"/><circle cx="198" cy="170" r="8" fill="#7cc6ff"/><circle cx="124" cy="212" r="7" fill="#ffc94a"/><circle cx="192" cy="214" r="7" fill="#62d2b4"/><circle cx="156" cy="232" r="6" fill="#b69cff"/></g><g><circle cx="108" cy="148" r="11" fill="#ff6fa5" stroke="#fff" stroke-width="2"/><circle cx="120" cy="148" r="11" fill="#ffc94a" stroke="#fff" stroke-width="2"/><circle cx="132" cy="148" r="11" fill="#62d2b4" stroke="#fff" stroke-width="2"/><circle cx="144" cy="148" r="11" fill="#7cc6ff" stroke="#fff" stroke-width="2"/><circle cx="156" cy="148" r="11" fill="#b69cff" stroke="#fff" stroke-width="2"/><circle cx="168" cy="148" r="11" fill="#ff6fa5" stroke="#fff" stroke-width="2"/><circle cx="180" cy="148" r="11" fill="#ffc94a" stroke="#fff" stroke-width="2"/><circle cx="192" cy="148" r="11" fill="#62d2b4" stroke="#fff" stroke-width="2"/><circle cx="204" cy="148" r="11" fill="#7cc6ff" stroke="#fff" stroke-width="2"/></g>`}
   if(b.pattern==="galaxy"){ph=`<g fill="#fff"><circle cx="122" cy="44" r="2.5"/><circle cx="194" cy="56" r="2"/><path class="twk" d="M176 30 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>`;pb=`<g fill="#fff"><circle cx="112" cy="170" r="3"/><circle cx="202" cy="180" r="2.5"/><circle cx="150" cy="214" r="2"/><path class="twk" d="M128 192 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" style="animation-delay:-1s"/></g>`}
   const eyeCol=b.pattern==="points"?"#4fa8ff":b.pattern==="galaxy"?"#ff6fa5":dark?"#ffc94a":"#5b3a2e";
   const eyeDeep=mix(eyeCol,"#000000",.55);
@@ -592,7 +596,7 @@ function catSVG(b,fur,acc,opts={}){
     ${ph}
     ${eyes}
     <ellipse class="blush" cx="106" cy="108" rx="13" ry="7" fill="#ff8fb8" opacity=".55"/><ellipse class="blush" cx="206" cy="108" rx="13" ry="7" fill="#ff8fb8" opacity=".55"/>
-    <path d="M148 99 Q156 96 164 99 Q162 106 156 108 Q150 106 148 99Z" fill="#ff7fae"/><ellipse cx="153" cy="100" rx="2.5" ry="1.5" fill="#fff" opacity=".7"/>
+    <path d="M148 99 Q156 96 164 99 Q162 106 156 108 Q150 106 148 99Z" fill="#ff7fae"/><ellipse cx="153" cy="100" rx="2.5" ry="1.5" fill="#fff" opacity=".7"/>${b.pattern==="clown"?`<circle class="honk" cx="156" cy="102" r="11" fill="#ff3b4f" stroke="#c9213a" stroke-width="2"/><circle cx="152" cy="98" r="3.5" fill="#fff" opacity=".8"/>`:""}
     ${mouth}
     <g class="whisk" stroke="${dark?mix(c,"#ffffff",.6):line}" stroke-width="2.5" stroke-linecap="round" fill="none"><path d="M100 100 q-16 -4 -32 -2 M100 108 q-16 2 -30 10 M212 100 q16 -4 32 -2 M212 108 q16 2 30 10"/></g>
     ${ah}
@@ -605,6 +609,7 @@ function catSVG(b,fur,acc,opts={}){
     if(b.pattern==="tabby")wb=`<g fill="${d}" opacity=".85"><path d="M98 127 q6 16 2 32 q10-14 8-33z"/><path d="M124 125 q6 18 2 36 q10-16 8-36z"/><path d="M150 125 q6 18 2 36 q10-16 8-36z"/></g>`;
     if(b.pattern==="calico")wb=`<ellipse cx="104" cy="150" rx="26" ry="18" fill="#ffa95a"/><ellipse cx="166" cy="178" rx="22" ry="15" fill="#4a3f3f"/>`;
     if(b.pattern==="tux")wb=`<ellipse cx="196" cy="176" rx="26" ry="24" fill="#fff"/>`;
+    if(b.pattern==="clown")wb=`<g><circle cx="100" cy="146" r="8" fill="#ff6fa5"/><circle cx="132" cy="176" r="7" fill="#ffc94a"/><circle cx="160" cy="140" r="7" fill="#62d2b4"/><circle cx="186" cy="182" r="6" fill="#7cc6ff"/><circle cx="80" cy="178" r="6" fill="#b69cff"/></g><g><circle cx="176" cy="132" r="10" fill="#ff6fa5" stroke="#fff" stroke-width="2"/><circle cx="186" cy="144" r="10" fill="#ffc94a" stroke="#fff" stroke-width="2"/><circle cx="198" cy="152" r="10" fill="#62d2b4" stroke="#fff" stroke-width="2"/><circle cx="212" cy="156" r="10" fill="#7cc6ff" stroke="#fff" stroke-width="2"/><circle cx="226" cy="154" r="10" fill="#b69cff" stroke="#fff" stroke-width="2"/><circle cx="238" cy="146" r="10" fill="#ff6fa5" stroke="#fff" stroke-width="2"/></g>`;
     if(b.pattern==="galaxy")wb=`<g fill="#fff"><circle cx="100" cy="146" r="3"/><circle cx="150" cy="138" r="2.5"/><circle cx="128" cy="180" r="2"/><path class="twk" d="M176 150 l3 7 7 3-7 3-3 7-3-7-7-3 7-3z"/></g>`;
     const wcollar=acc==="collar"?`<path d="M168 146 Q210 176 252 146" stroke="#ff6fa5" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M168 146 Q210 176 252 146" stroke="#ffb3cf" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="2 8"/><g class="bell"><circle cx="210" cy="170" r="10" fill="#ffc94a" stroke="#e9a817" stroke-width="2"/><circle cx="206" cy="166" r="3" fill="#fff" opacity=".8"/><path d="M205 174 h10" stroke="#a87410" stroke-width="2" stroke-linecap="round"/></g>`:"";
     return `${defs}
@@ -638,7 +643,7 @@ const $=id=>document.getElementById(id);
 const ICONS={hunger:"🐟",fun:"🧶",clean:"🫧",energy:"⚡",potty:"🚽"};
 let BUSY=false;
 const clamp=v=>Math.max(0,Math.min(100,v));
-const VERSION="1.5";
+const VERSION="1.6";
 let TEST=false;try{TEST=localStorage.getItem("kitty-test")==="1"}catch(e){}
 const locked=x=>!TEST&&x.lvl>S.lvl;
 const pct=()=>Math.min(100,S.xp/need(S.lvl)*100)+"%";
