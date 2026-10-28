@@ -237,25 +237,27 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .tip::before{content:"";position:absolute;top:-6px;left:calc(50% + var(--ax,0px) - 7px);border:7px solid transparent;border-top:0;border-bottom-color:#fff}
 .tip b{font-weight:900;font-size:.95rem}
 .tip small{color:var(--soft);font-weight:800;font-size:.78rem}
-.meter span{position:relative;font-size:1rem;line-height:1}
+.meter span{position:relative;font-size:1.1rem;line-height:1;color:var(--ink)}
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-.15em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.meter .ic,.dbtn .ic,.sub .ic{display:block}
 .meter.low{animation:alarm .8s ease-in-out infinite}
 @keyframes alarm{50%{transform:scale(1.15);box-shadow:0 0 0 4px rgba(255,111,165,.35)}}
 .title{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
 /* ---------- dock & fly-outs ---------- */
-.dock{position:fixed;z-index:9;left:50%;transform:translateX(-50%);bottom:calc(var(--safe-b) + 12px);display:flex;gap:6px;padding:6px;max-width:calc(100vw - 24px)}
+.dock{position:fixed;z-index:9;left:50%;transform:translateX(-50%);bottom:calc(var(--safe-b) + 12px);display:flex;gap:6px;padding:6px;border-radius:28px;max-width:calc(100vw - 24px)}
 .group{position:relative}
 .dock.sleeping .group:not(.napgroup){display:none}
 .dock.sleeping .napgroup .dbtn{width:96px}
 .dbtn{width:60px;height:62px;border:0;border-radius:22px;cursor:pointer;color:var(--ink);background:var(--tint,#fff);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;font:900 .68rem var(--body);box-shadow:0 4px 0 rgba(91,42,74,.15);transition:transform .12s}
-.dbtn b{font-size:1.55rem;line-height:1.15}
+.dbtn b{font-size:1.45rem;line-height:1.15;margin-bottom:2px}
 .dbtn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(91,42,74,.15)}
 .dbtn:disabled{opacity:.45;cursor:not-allowed}
 .group.open>.dbtn{transform:translateY(-3px) scale(1.05);box-shadow:0 0 0 3px var(--pink)}
 .fly-out{position:absolute;left:50%;bottom:calc(100% + 12px);transform:translateX(-50%);display:flex;flex-direction:column-reverse;gap:8px;pointer-events:none}
 .sub{display:flex;align-items:center;gap:8px;border:0;border-radius:999px;padding:6px 14px 6px 6px;background:#fff;color:var(--ink);font:900 .95rem var(--body);white-space:nowrap;cursor:pointer;box-shadow:0 4px 0 rgba(91,42,74,.15);
   opacity:0;transform:translateY(14px) scale(.7);transition:opacity .18s,transform .22s cubic-bezier(.3,1.5,.5,1)}
-.sub b{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:1.3rem;background:var(--tint)}
+.sub b{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:1.25rem;background:var(--tint)}
 .sub:disabled{opacity:.45!important;cursor:not-allowed}
 .group.open .fly-out{pointer-events:auto}
 .group.open .sub{opacity:1;transform:none}
@@ -314,7 +316,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   .meters{gap:10px;padding:7px}
   .meter{width:52px;height:52px}
   .meter::before{inset:5px}
-  .meter span{font-size:1.45rem}
+  .meter span{font-size:1.55rem}
   .stage{--wt:max(24%,calc(var(--safe-t) + 256px));--st:max(42%,calc(var(--safe-t) + 340px))}
   .sun,.sign{top:max(24%,calc(var(--safe-t) + 256px))}
   .sign{font-size:1.1rem;padding:10px 16px}
@@ -322,9 +324,9 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   .fx{font-size:2.6rem}
   .zzz{font-size:2.6rem}
   .fly{font-size:2.1rem}
-  .dock{gap:10px;padding:9px;bottom:calc(var(--safe-b) + 18px)}
+  .dock{gap:10px;padding:9px;border-radius:37px;bottom:calc(var(--safe-b) + 18px)}
   .dbtn{width:88px;height:90px;border-radius:28px;font-size:.9rem}
-  .dbtn b{font-size:2.3rem}
+  .dbtn b{font-size:2.1rem}
   .dock.sleeping .napgroup .dbtn{width:140px}
   .fly-out{gap:12px;bottom:calc(100% + 16px)}
   .sub{font-size:1.2rem;padding:8px 22px 8px 8px;gap:12px}
@@ -435,25 +437,25 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
 <nav class="dock pill" id="dock" aria-label="Actions">
   <div class="group" id="g-care">
-    <button class="dbtn" id="b-care" style="--tint:#ffe2b8" aria-expanded="false"><b>🍽️</b>Care</button>
+    <button class="dbtn" id="b-care" style="--tint:#ffe2b8" aria-expanded="false"><b data-i="care"></b>Care</button>
     <div class="fly-out">
-      <button class="sub" id="a-feed" style="--tint:#ffd9a0"><b>🐟</b>Feed</button>
-      <button class="sub" id="a-bath" style="--tint:#cfe9ff"><b>🫧</b>Bath</button>
-      <button class="sub" id="a-potty" style="--tint:#f3e4c9"><b>🚽</b>Potty</button>
+      <button class="sub" id="a-feed" style="--tint:#ffd9a0"><b data-i="fish"></b>Feed</button>
+      <button class="sub" id="a-bath" style="--tint:#cfe9ff"><b data-i="bath"></b>Bath</button>
+      <button class="sub" id="a-potty" style="--tint:#f3e4c9"><b data-i="potty"></b>Potty</button>
     </div>
   </div>
   <div class="group" id="g-fun">
-    <button class="dbtn" id="b-fun" style="--tint:#c9f1e4" aria-expanded="false"><b>🎈</b>Fun</button>
+    <button class="dbtn" id="b-fun" style="--tint:#c9f1e4" aria-expanded="false"><b data-i="fun"></b>Fun</button>
     <div class="fly-out">
-      <button class="sub" id="a-play" style="--tint:#c9f1e4"><b>🧶</b>Play</button>
-      <button class="sub" id="a-park" style="--tint:#d6f2b8"><b>🌳</b>Park</button>
+      <button class="sub" id="a-play" style="--tint:#c9f1e4"><b data-i="yarn"></b>Play</button>
+      <button class="sub" id="a-park" style="--tint:#d6f2b8"><b data-i="tree"></b>Park</button>
     </div>
   </div>
   <div class="group napgroup">
-    <button class="dbtn" id="a-sleep" style="--tint:#e3d9ff"><b>🌙</b><span id="sleeplabel">Nap</span></button>
+    <button class="dbtn" id="a-sleep" style="--tint:#e3d9ff"><b data-i="moon"></b><span id="sleeplabel">Nap</span></button>
   </div>
   <div class="group">
-    <button class="dbtn" id="b-style" style="--tint:#ffd6e7"><b>🎀</b>Style</button>
+    <button class="dbtn" id="b-style" style="--tint:#ffd6e7"><b data-i="bow"></b>Style</button>
   </div>
 </nav>
 
@@ -637,7 +639,24 @@ function catSVG(b,fur,acc,opts={}){
 }
 
 const $=id=>document.getElementById(id);
-const ICONS={hunger:"🐟",fun:"🧶",clean:"🫧",energy:"⚡",potty:"🚽"};
+// simple line icons (24px grid, drawn with currentColor)
+const ICO={
+  fish:'<path d="M2 12c3.5-5 10-5.5 14 0-4 5.5-10.5 5-14 0Z"/><path d="M16 12l5-4v8Z"/><circle cx="7" cy="11" r=".8" fill="currentColor"/>',
+  yarn:'<circle cx="12" cy="12" r="8"/><path d="M6.5 6.5c5 1 9 5 10.5 10M5 11c4.5.5 8 3.5 9 8.5M10 4.3c4 2 6.5 5.5 7.7 9.5"/>',
+  bubbles:'<circle cx="9" cy="14" r="5"/><circle cx="17.5" cy="7.5" r="3"/><circle cx="18" cy="17" r="2"/>',
+  bolt:'<path d="M13 2 5 14h6l-1 8 8-12h-6Z"/>',
+  potty:'<rect x="4" y="3" width="7" height="7" rx="1.5"/><path d="M3 10h18c0 4-3.5 7-8 7h-2c-4.5 0-8-3-8-7Z"/><path d="M9 17l-1 4h8l-1-4"/>',
+  care:'<path d="M3 11h18c0 5-4 8-9 8s-9-3-9-8Z"/><path d="M8 21h8M9.5 7c0-1.5 1.5-1.5 1.5-3M13.5 7c0-1.5 1.5-1.5 1.5-3"/>',
+  bath:'<path d="M3 12h18v1.5a5.5 5.5 0 0 1-5.5 5.5h-7A5.5 5.5 0 0 1 3 13.5Z"/><path d="M6 12V6.5a2.5 2.5 0 0 1 5 0M7 19l-1 2M17 19l1 2"/>',
+  fun:'<path d="M12 3c-3.9 0-7 3-7 6.8C5 14 8.5 17 12 17s7-3 7-7.2C19 6 15.9 3 12 3Z"/><path d="M12 17v2c0 1.5-2 1.5-2 3"/>',
+  tree:'<circle cx="12" cy="9" r="6"/><path d="M12 15v6M8.5 21h7"/>',
+  moon:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  bow:'<path d="M12 12C8 6 3 6 3 9v6c0 3 5 3 9-3Zm0 0c4-6 9-6 9-3v6c0 3-5 3-9-3Z"/><circle cx="12" cy="12" r="2"/>'
+};
+const ico=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg>`;
+const ICONS={hunger:ico("fish"),fun:ico("yarn"),clean:ico("bubbles"),energy:ico("bolt"),potty:ico("potty")};
+document.querySelectorAll("[data-i]").forEach(e=>e.innerHTML=ico(e.dataset.i));
 let BUSY=false;
 const clamp=v=>Math.max(0,Math.min(100,v));
 const VERSION="1.8";
@@ -689,7 +708,7 @@ function render(){
   ["b-care","b-fun","a-feed","a-play","a-bath","a-potty","a-park"].forEach(k=>$(k).disabled=S.asleep);
   if(S.asleep)closeFly();
   $("dock").classList.toggle("sleeping",S.asleep);
-  $("a-sleep").querySelector("b").textContent=S.asleep?"☀️":"🌙";
+  $("a-sleep").querySelector("b").innerHTML=ico(S.asleep?"sun":"moon");
   $("sleeplabel").textContent=S.asleep?"Wake":"Nap";
   const curFur=f.id;
   $("furs").innerHTML=FURS.map(x=>{const lk=locked(x);return `<button class="chip${lk?" locked":""}" data-fur="${x.id}" aria-pressed="${x.id===curFur}" ${lk?"disabled":""}><span class="sw" style="background:${x.c}"></span>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
