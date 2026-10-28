@@ -582,7 +582,7 @@ function accParts(acc){
 function catSVG(b,fur,acc,opts={}){
   // flat hand-drawn anime look: slim body, small round head, tall ears, big round eyes with dot pupils, thin ink lines, one cel shadow per part
   const c=fur.c,d=fur.d,u=opts.uid||"m",face=opts.sleep?"sleep":(opts.face||"");
-  const belly=mix(c,"#ffffff",.55),shade=mix(c,d,.35);
+  const belly=mix(c,"#ffffff",.55),shade=lum(c)>.8?mix(c,"#7f86a3",.32):mix(c,d,.35);
   const dark=lum(c)<.45;
   const ink=dark?mix(c,"#000000",.6):"#4a3540";
   const line=ink;
@@ -612,7 +612,7 @@ function catSVG(b,fur,acc,opts={}){
     mouth=`<path d="M156 122 q-4 5 -8 2 M156 122 q4 5 8 2" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`}
   else if(face==="happy"){eyes=`<path d="M108 100 q18 -20 36 0 M168 100 q18 -20 36 0" stroke="${ink}" stroke-width="5" fill="none" stroke-linecap="round"/>`;
     mouth=`<path d="M146 121 q10 4 20 0 q-2 12 -10 12 q-8 0 -10 -12z" fill="#c2456f" stroke="${ink}" stroke-width="2.5" stroke-linejoin="round"/><path d="M151 127 q5 3 10 0 q-2 5 -5 5 q-3 0 -5 -5z" fill="#ff8fb1"/>`}
-  else{eyes=`<g class="blink"><g><ellipse cx="126" cy="92" rx="18" ry="21" fill="#fff" stroke="${ink}" stroke-width="3.5"/><ellipse cx="129" cy="95" rx="6" ry="9.5" fill="${pupil}"/><circle cx="131.5" cy="90" r="2.4" fill="#fff"/></g><g><ellipse cx="186" cy="92" rx="18" ry="21" fill="#fff" stroke="${ink}" stroke-width="3.5"/><ellipse cx="183" cy="95" rx="6" ry="9.5" fill="${pupil}"/><circle cx="185.5" cy="90" r="2.4" fill="#fff"/></g></g>`;
+  else{eyes=`<g class="blink"><g><ellipse cx="127" cy="93" rx="15" ry="17.5" fill="#fff" stroke="${ink}" stroke-width="3.5"/><ellipse cx="130" cy="96" rx="5" ry="8" fill="${pupil}"/><circle cx="132" cy="92" r="2" fill="#fff"/></g><g><ellipse cx="185" cy="93" rx="15" ry="17.5" fill="#fff" stroke="${ink}" stroke-width="3.5"/><ellipse cx="182" cy="96" rx="5" ry="8" fill="${pupil}"/><circle cx="184" cy="92" r="2" fill="#fff"/></g></g>`;
     mouth=face==="eat"
       ?`<ellipse class="chomp" cx="156" cy="128" rx="8" ry="7" fill="#c2456f" stroke="${ink}" stroke-width="2"/>`
       :`<path d="M156 121 q-5 6 -10 3 M156 121 q5 6 10 3" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`}
@@ -665,7 +665,7 @@ function catSVG(b,fur,acc,opts={}){
   if(opts.walk){
     // side profile facing right (after the walk-cycle sheet): slim body, long legs stepping in diagonal pairs (.a/.b), tail up for balance
     const B="M92 134 C114 126 150 130 174 124 C194 116 214 116 224 132 C232 146 228 166 212 176 C198 184 172 180 150 180 L104 182 C84 182 68 172 68 156 C68 144 78 136 92 134Z";
-    const leg=(x,far,ph)=>{const lc=far?shade:P==="points"?"#8a6650":c,pc=far?shade:pawC;return `<g class="leg ${ph}" style="transform-origin:${x}px 156px"><path d="M${x-9} 150 C${x-8} 190 ${x-6} 222 ${x-5} 240 L${x+5} 240 C${x+6} 222 ${x+8} 190 ${x+9} 150Z" fill="${lc}" stroke="${ink}" stroke-width="2.6" stroke-linejoin="round"/><ellipse cx="${x+2}" cy="241" rx="9" ry="5.5" fill="${pc}" stroke="${ink}" stroke-width="2.4"/>${far?"":`<path d="M${x-1} 245 v-3 M${x+5} 245 v-3" stroke="${ink}" stroke-width="1.6" stroke-linecap="round"/>`}</g>`};
+    const leg=(x,far,ph,hind)=>{const lc=far?shade:P==="points"?"#8a6650":c,pc=far?shade:pawC;return `<g class="leg ${ph}" style="transform-origin:${x}px 156px"><path d="${hind?`M${x-14} 146 C${x-16} 176 ${x-6} 194 ${x-3} 204 L${x-7} 238 L${x+5} 240 L${x+10} 206 C${x+15} 190 ${x+15} 166 ${x+13} 146Z`:`M${x-9} 150 C${x-8} 190 ${x-6} 222 ${x-5} 240 L${x+5} 240 C${x+6} 222 ${x+8} 190 ${x+9} 150Z`}" fill="${lc}" stroke="${ink}" stroke-width="2.6" stroke-linejoin="round"/><ellipse cx="${x+2}" cy="241" rx="9" ry="5.5" fill="${pc}" stroke="${ink}" stroke-width="2.4"/>${far?"":`<path d="M${x-1} 245 v-3 M${x+5} 245 v-3" stroke="${ink}" stroke-width="1.6" stroke-linecap="round"/>`}</g>`};
     let wb="";
     if(P==="tabby")wb=`<g fill="${d}" opacity=".8"><path d="M100 124 q6 14 2 28 q10-12 8-29z"/><path d="M126 121 q6 16 2 30 q10-14 8-30z"/><path d="M152 121 q6 16 2 30 q10-14 8-30z"/></g>`;
     if(P==="calico")wb=`<path d="M50 110 L120 110 C124 130 110 146 116 162 C120 176 104 186 98 196 L50 196Z" fill="#f6a04d"/><path d="M146 110 L200 110 C198 128 184 138 174 150 C164 160 150 156 146 140Z" fill="#3f3536"/>`;
@@ -688,14 +688,14 @@ function catSVG(b,fur,acc,opts={}){
   <clipPath id="cs${u}"><path d="${B}"/></clipPath><clipPath id="sh${u}"><path d="${SH}"/></clipPath>
   <ellipse class="shadow" cx="150" cy="248" rx="90" ry="7" fill="#5b2a4a" opacity=".13"/>
   <g class="wtail"><path d="M74 140 C50 130 40 104 46 80 C50 66 42 56 34 62" stroke="${ink}" stroke-width="15" fill="none" stroke-linecap="round"/><path d="M74 140 C50 130 40 104 46 80 C50 66 42 56 34 62" stroke="${tailC}" stroke-width="10" fill="none" stroke-linecap="round"/></g>
-  ${leg(96,true,"b")}${leg(194,true,"a")}${leg(116,false,"a")}${leg(212,false,"b")}
+  ${leg(98,true,"b",1)}${leg(194,true,"a")}${leg(118,false,"a",1)}${leg(212,false,"b")}
   <path d="${B}" fill="${c}"/>
   <g clip-path="url(#cs${u})">${wb}<path d="M60 160 C110 172 170 172 230 158 L230 190 L60 190Z" fill="${shade}" opacity=".45"/></g>
   <path d="${B}" fill="none" ${st}/>
   <path d="M214 150 l-3 6 4 2 -3 7" stroke="${ink}" stroke-width="1.6" fill="none" stroke-linecap="round"/>
   <path d="M84 168 C92 156 108 154 116 164" stroke="${ink}" stroke-width="2" fill="none" stroke-linecap="round"/>
   ${wcollar}
-  <g class="head"><g transform="translate(-6 12)">
+  <g class="head"><g transform="translate(24 26) scale(.86)">
     <path d="M192 84 C188 62 190 44 196 34 C200 30 204 32 205 36 C208 50 210 66 210 80Z" fill="${P==="calico"?"#3f3536":P==="points"?"#6b4a38":shade}" ${st}/>
     <path d="M206 80 C204 58 206 40 212 30 C216 26 220 28 222 32 C226 46 228 62 228 76Z" fill="${earL}" ${st}/><path d="M212 70 C211 54 213 42 216 36 C219 46 221 58 221 70Z" fill="url(#ie${u})"/>
     <path d="${SH}" fill="${c}"/>
@@ -710,7 +710,7 @@ function catSVG(b,fur,acc,opts={}){
   </g></g>`;
   }
   // front view, sitting upright (after the character sheet): narrow shoulders, haunches at the bottom, tail rising at the side
-  const BF="M132 116 C122 134 118 160 116 186 C114 206 100 218 100 236 C100 248 110 252 122 252 L178 252 C190 252 200 248 200 236 C200 218 186 206 184 186 C182 160 178 134 168 116Z";
+  const BF="M134 102 C122 126 118 160 116 186 C114 206 100 218 100 236 C100 248 110 252 122 252 L178 252 C190 252 200 248 200 236 C200 218 186 206 184 186 C182 160 178 126 166 102Z";
   return `${defs}
   <clipPath id="bc${u}"><path d="${BF}"/></clipPath>
   <ellipse class="shadow" cx="150" cy="252" rx="66" ry="7" fill="#5b2a4a" opacity=".13"/>
@@ -719,15 +719,15 @@ function catSVG(b,fur,acc,opts={}){
     <path d="${BF}" fill="${c}"/>
     <g clip-path="url(#bc${u})">${pb}<path d="M170 112 C186 150 192 200 206 260 L214 260 L214 112Z" fill="${shade}" opacity=".45"/></g>
     <path d="${BF}" fill="none" ${st}/>
-    <path d="M106 232 C110 216 122 212 128 224 M194 232 C190 216 178 212 172 224" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <path d="M139 168 C137 200 137 228 138 248 M161 168 C163 200 163 228 162 248" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <path d="M150 128 l-2.5 5 3.5 1.5 -2.5 5" stroke="${ink}" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".7"/>
+    <path d="M118 194 C104 204 100 228 106 246 M182 194 C196 204 200 228 194 246" stroke="${ink}" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="150" cy="110" rx="20" ry="7" fill="${shade}" opacity=".5"/>
+    <path d="M139 150 C136 190 137 226 138 248 M161 150 C164 190 163 226 162 248" stroke="${ink}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    
     ${hb}
     <g class="paw"><ellipse cx="136" cy="250" rx="12" ry="6.5" fill="${pawC}" ${st}/><path d="M132 253 v-3 M140 253 v-3" stroke="${ink}" stroke-width="1.8" stroke-linecap="round"/></g>
     <g class="paw r"><ellipse cx="164" cy="250" rx="12" ry="6.5" fill="${pawC}" ${st}/><path d="M160 253 v-3 M168 253 v-3" stroke="${ink}" stroke-width="1.8" stroke-linecap="round"/></g>
-    <g transform="translate(150 124) scale(.5) translate(-156 -142)">${ab}</g>
+    <g transform="translate(150 112) scale(.46) translate(-156 -142)">${ab}</g>
   </g>
-  <g class="head"><g transform="translate(150 84) scale(.62) translate(-156 -94)">${head}</g></g>`;
+  <g class="head"><g transform="translate(150 78) scale(.52) translate(-156 -94)">${head}</g></g>`;
 }
 
 const $=id=>document.getElementById(id);
