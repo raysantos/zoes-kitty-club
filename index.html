@@ -223,21 +223,21 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 /* ---------- HUD ---------- */
 .hud{position:fixed;z-index:8;left:0;right:0;top:0;padding-top:calc(var(--safe-t) + 10px);padding-left:var(--gl);padding-right:var(--gr);display:flex;flex-direction:column;gap:8px;pointer-events:none}
 .hud>*{pointer-events:auto}
-/* centered: name pill with the needs pill tucked under it (slides out on load), coins beside */
+/* centered: wide name pill with the needs pill tucked under it (slides out on load) */
 .hudrow{display:flex;justify-content:center;align-items:flex-start;gap:8px}
-.namestack{display:flex;flex-direction:column;align-items:center;min-width:0;max-width:calc(100% - 96px)}
-.lvlpill{position:relative;z-index:2;max-width:100%}.coins{flex:none;margin-top:6px}
+.namestack{display:flex;flex-direction:column;align-items:center;min-width:0;width:min(100%,360px)}
+.lvlpill{position:relative;z-index:2;width:100%}
 .meters{position:relative;z-index:1;margin-top:-18px;animation:slideout .5s cubic-bezier(.3,1.4,.5,1) .25s backwards}
 @keyframes slideout{from{transform:translateY(-60%);opacity:0}}
 /* level pill and need rings share one row when there's room */
 .pill{background:var(--glass);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-radius:999px;box-shadow:0 3px 0 rgba(246,201,218,.8)}
 .lvlpill{display:flex;align-items:center;gap:8px;padding:4px 12px 4px 4px;min-width:0;flex:0 1 auto;border:0;cursor:pointer;color:var(--ink);text-align:left}
 .badge{flex:none;width:38px;height:38px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-family:var(--display);font-size:1.25rem;box-shadow:inset 0 -3px 0 #e04e88}
-.lvltext{min-width:0;display:flex;flex-direction:column;gap:3px}
-.catname{font-weight:900;font-size:.9rem;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:46vw}
+.lvltext{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.catname{font-weight:900;font-size:.9rem;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .xpbar{width:min(36vw,160px);height:7px;border-radius:999px;background:#fde3ec;overflow:hidden}
 .xpbar i{display:block;height:100%;border-radius:999px;background:var(--pink);transition:width .4s}
-.coins{padding:6px 12px;font-weight:900;font-variant-numeric:tabular-nums;display:flex;gap:6px;align-items:center}
+.coins{margin-left:auto;margin-right:10px;padding:6px 12px;border-radius:999px;background:#fff6f9;font-weight:900;font-variant-numeric:tabular-nums;display:flex;gap:6px;align-items:center}
 .coin{width:16px;height:16px;border-radius:50%;background:var(--sun);box-shadow:inset -2px -2px 0 #e9a817}
 /* light-blue tab hanging from the name pill: square top, rounded bottom, a lip and soft drop shadow for depth */
 .meters{display:flex;gap:6px;padding:23px 8px 8px;border-radius:0 0 22px 22px;background:linear-gradient(180deg,#cfeaff,#e4f4ff 60%,#d4ecff);box-shadow:inset 0 -3px 0 rgba(255,255,255,.7),inset 1px 0 0 rgba(255,255,255,.6),inset -1px 0 0 rgba(255,255,255,.6),0 4px 0 #9fd0f5,0 9px 14px rgba(60,120,180,.2)}
@@ -294,7 +294,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .chip[aria-pressed="true"]{border-color:var(--pink);background:#ffe6ef}
 .chip.locked{opacity:.55;cursor:not-allowed}
 .chip.acc{padding:4px 12px 4px 4px;gap:8px}
-.accimg{width:46px;height:42px;flex:none;border-radius:10px;background:#fff}
+.accimg{width:46px;height:42px;flex:none;border-radius:10px;background:#fff;padding:5px;box-sizing:border-box}
 .sw{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
 .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
 .catcard{border:3px solid transparent;border-radius:18px;background:#fff6f9;padding:8px;cursor:pointer;text-align:center;font:800 .85rem var(--body);color:var(--ink)}
@@ -324,10 +324,10 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   :root{--dock:calc(var(--safe-b) + 128px);--catw:min(60vw,46vh,560px);--tubw:min(80vw,62vh,720px);--boxw:min(76vw,58vh,660px)}
   .hud{padding-top:calc(var(--safe-t) + 18px);padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));gap:12px}
   .hudrow{gap:12px}
-  .coins{margin-top:8px}
+  .namestack{width:min(100%,480px)}
   .lvlpill{gap:12px;padding:6px 20px 6px 6px}
   .badge{width:54px;height:54px;font-size:1.7rem}
-  .catname{font-size:1.2rem;max-width:50vw}
+  .catname{font-size:1.2rem}
   .xpbar{width:240px;height:10px}
   .coins{padding:10px 18px;font-size:1.25rem;gap:8px}
   .coin{width:22px;height:22px}
@@ -452,7 +452,6 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
     </button>
     <div class="pill meters" id="meters" aria-label="Your cat's needs"></div>
     </div>
-    <div class="pill coins" title="Fish treats"><span class="coin"></span><span id="coins">0</span></div>
   </div>
 </div>
 <div class="tip" id="tip" role="status"></div>
@@ -493,7 +492,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
 <section class="sheet" id="s-cats" aria-label="My cats" aria-hidden="true">
   <div class="grab"></div>
-  <div class="sheethead"><h2>My cats</h2><button class="close" data-close aria-label="Close">✕</button></div>
+  <div class="sheethead"><h2>My cats</h2><div class="coins" title="Fish treats"><span class="coin"></span><span id="coins">0</span></div><button class="close" data-close aria-label="Close">✕</button></div>
   <div class="lvlinfo">
     <div class="row"><span id="lvlname">Level 1 · New Friend</span><span id="xptext">0 / 30 XP</span></div>
     <div class="bigbar"><i id="xpfill2" style="width:0"></i></div>
@@ -571,6 +570,17 @@ const furOf=b=>FURS.find(f=>f.id===(S.fur[b.id]||b.fur))||FURS[0];
 
 function mix(h1,h2,t){const a=parseInt(h1.slice(1),16),b=parseInt(h2.slice(1),16);const r=Math.round(((a>>16)&255)*(1-t)+((b>>16)&255)*t),g=Math.round(((a>>8)&255)*(1-t)+((b>>8)&255)*t),bl=Math.round((a&255)*(1-t)+(b&255)*t);return "#"+((1<<24)|(r<<16)|(g<<8)|bl).toString(16).slice(1)}
 function lum(h){const n=parseInt(h.slice(1),16);return(((n>>16)&255)*.3+((n>>8)&255)*.59+(n&255)*.11)/255}
+// accessory art in cat-head coordinates: [on the head, on the neck]
+function accParts(acc){
+  let ah="",ab="";
+  if(acc==="bow")ah=`<g transform="translate(208 30) rotate(18)"><path d="M0 0 C-10 -18 -28 -18 -26 0 C-28 18 -10 18 0 0Z M0 0 C10 -18 28 -18 26 0 C28 18 10 18 0 0Z" fill="#ff6fa5" stroke="#e04e88" stroke-width="2"/><path d="M-6 4 l-8 18 M6 4 l8 18" stroke="#ff6fa5" stroke-width="5" stroke-linecap="round"/><circle r="7" fill="#ff3d86"/><circle cx="-2" cy="-2" r="2" fill="#fff" opacity=".7"/></g>`;
+  if(acc==="collar")ab=`<path d="M108 136 q48 26 96 0" stroke="#ff6fa5" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M108 136 q48 26 96 0" stroke="#ffb3cf" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="2 8"/><g class="bell"><circle cx="156" cy="156" r="10" fill="#ffc94a" stroke="#e9a817" stroke-width="2"/><circle cx="152" cy="152" r="3" fill="#fff" opacity=".8"/><path d="M151 160 h10" stroke="#a87410" stroke-width="2" stroke-linecap="round"/></g>`;
+  if(acc==="flower")ah=`<g transform="translate(102 36)"><g fill="#fff" stroke="#ffd1e3" stroke-width="2"><circle cx="0" cy="-11" r="9"/><circle cx="11" cy="-3" r="9"/><circle cx="7" cy="10" r="9"/><circle cx="-7" cy="10" r="9"/><circle cx="-11" cy="-3" r="9"/></g><circle r="7" fill="#ffc94a"/><path d="M14 16 q10 4 16 -2" stroke="#62d2b4" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
+  if(acc==="glasses")ah=`<g fill="rgba(255,111,165,.32)" stroke="#ff3d86" stroke-width="5" stroke-linejoin="round"><path d="M126 114 C82 88 90 56 112 56 C122 56 126 64 126 68 C126 64 130 56 140 56 C162 56 170 88 126 114Z"/><path d="M186 114 C142 88 150 56 172 56 C182 56 186 64 186 68 C186 64 190 56 200 56 C222 56 230 88 186 114Z"/></g><path d="M104 68 q6 -6 12 -4 M164 68 q6 -6 12 -4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><path d="M150 72 q6 -6 12 0" stroke="#ff3d86" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M92 76 L80 68 M220 76 L232 68" stroke="#ff3d86" stroke-width="5" stroke-linecap="round"/>`;
+  if(acc==="tiara")ah=`<path d="M120 32 L133 12 L146 26 L156 2 L166 26 L179 12 L192 32Z" fill="#dff1ff" stroke="#7cc6ff" stroke-width="3" stroke-linejoin="round"/><circle cx="156" cy="18" r="5" fill="#ff6fa5"/><circle cx="133" cy="22" r="3" fill="#b69cff"/><circle cx="179" cy="22" r="3" fill="#b69cff"/><path class="twk" d="M196 8 l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#fff"/>`;
+  if(acc==="crown")ah=`<path d="M116 36 L120 4 L139 22 L156 -2 L173 22 L192 4 L196 36Z" fill="#ffd35c" stroke="#e9a817" stroke-width="3" stroke-linejoin="round"/><path d="M118 30 H194" stroke="#e9a817" stroke-width="3"/><circle cx="139" cy="28" r="4" fill="#ff6fa5"/><circle cx="156" cy="26" r="5" fill="#62d2b4"/><circle cx="173" cy="28" r="4" fill="#7cc6ff"/><circle cx="120" cy="4" r="3" fill="#fff3b0"/><circle cx="192" cy="4" r="3" fill="#fff3b0"/><circle cx="156" cy="-2" r="3.5" fill="#fff3b0"/>`;
+  return [ah,ab]
+}
 function catSVG(b,fur,acc,opts={}){
   const c=fur.c,d=fur.d,u=opts.uid||"m",face=opts.sleep?"sleep":(opts.face||"");
   const hi=mix(c,"#ffffff",.55),belly=mix(c,"#ffffff",.6),shade=mix(c,d,.55);
@@ -595,13 +605,7 @@ function catSVG(b,fur,acc,opts={}){
     mouth=face==="eat"
       ?`<ellipse class="chomp" cx="156" cy="116" rx="9" ry="8" fill="#c2456f"/><ellipse class="chomp" cx="156" cy="119" rx="5" ry="3" fill="#ff8fb1"/>`
       :`<path d="M156 108 q-6 10 -14 6 M156 108 q6 10 14 6" stroke="#3a2a3a" stroke-width="3" fill="none" stroke-linecap="round"/>`}
-  let ah="",ab="";
-  if(acc==="bow")ah=`<g transform="translate(208 30) rotate(18)"><path d="M0 0 C-10 -18 -28 -18 -26 0 C-28 18 -10 18 0 0Z M0 0 C10 -18 28 -18 26 0 C28 18 10 18 0 0Z" fill="#ff6fa5" stroke="#e04e88" stroke-width="2"/><path d="M-6 4 l-8 18 M6 4 l8 18" stroke="#ff6fa5" stroke-width="5" stroke-linecap="round"/><circle r="7" fill="#ff3d86"/><circle cx="-2" cy="-2" r="2" fill="#fff" opacity=".7"/></g>`;
-  if(acc==="collar")ab=`<path d="M108 136 q48 26 96 0" stroke="#ff6fa5" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M108 136 q48 26 96 0" stroke="#ffb3cf" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="2 8"/><g class="bell"><circle cx="156" cy="156" r="10" fill="#ffc94a" stroke="#e9a817" stroke-width="2"/><circle cx="152" cy="152" r="3" fill="#fff" opacity=".8"/><path d="M151 160 h10" stroke="#a87410" stroke-width="2" stroke-linecap="round"/></g>`;
-  if(acc==="flower")ah=`<g transform="translate(102 36)"><g fill="#fff" stroke="#ffd1e3" stroke-width="2"><circle cx="0" cy="-11" r="9"/><circle cx="11" cy="-3" r="9"/><circle cx="7" cy="10" r="9"/><circle cx="-7" cy="10" r="9"/><circle cx="-11" cy="-3" r="9"/></g><circle r="7" fill="#ffc94a"/><path d="M14 16 q10 4 16 -2" stroke="#62d2b4" stroke-width="5" fill="none" stroke-linecap="round"/></g>`;
-  if(acc==="glasses")ah=`<g fill="rgba(255,111,165,.32)" stroke="#ff3d86" stroke-width="5" stroke-linejoin="round"><path d="M126 114 C82 88 90 56 112 56 C122 56 126 64 126 68 C126 64 130 56 140 56 C162 56 170 88 126 114Z"/><path d="M186 114 C142 88 150 56 172 56 C182 56 186 64 186 68 C186 64 190 56 200 56 C222 56 230 88 186 114Z"/></g><path d="M104 68 q6 -6 12 -4 M164 68 q6 -6 12 -4" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"/><path d="M150 72 q6 -6 12 0" stroke="#ff3d86" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M92 76 L80 68 M220 76 L232 68" stroke="#ff3d86" stroke-width="5" stroke-linecap="round"/>`;
-  if(acc==="tiara")ah=`<path d="M120 32 L133 12 L146 26 L156 2 L166 26 L179 12 L192 32Z" fill="#dff1ff" stroke="#7cc6ff" stroke-width="3" stroke-linejoin="round"/><circle cx="156" cy="18" r="5" fill="#ff6fa5"/><circle cx="133" cy="22" r="3" fill="#b69cff"/><circle cx="179" cy="22" r="3" fill="#b69cff"/><path class="twk" d="M196 8 l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#fff"/>`;
-  if(acc==="crown")ah=`<path d="M116 36 L120 4 L139 22 L156 -2 L173 22 L192 4 L196 36Z" fill="#ffd35c" stroke="#e9a817" stroke-width="3" stroke-linejoin="round"/><path d="M118 30 H194" stroke="#e9a817" stroke-width="3"/><circle cx="139" cy="28" r="4" fill="#ff6fa5"/><circle cx="156" cy="26" r="5" fill="#62d2b4"/><circle cx="173" cy="28" r="4" fill="#7cc6ff"/><circle cx="120" cy="4" r="3" fill="#fff3b0"/><circle cx="192" cy="4" r="3" fill="#fff3b0"/><circle cx="156" cy="-2" r="3.5" fill="#fff3b0"/>`;
+  const [ah,ab]=accParts(acc);
   const st=`stroke="${line}" stroke-width="3.5" stroke-linejoin="round"`;
   const defs=`<defs>
     <radialGradient id="fb${u}" cx=".38" cy=".3" r=".8"><stop offset="0" stop-color="${hi}"/><stop offset=".6" stop-color="${c}"/><stop offset="1" stop-color="${shade}"/></radialGradient>
@@ -705,6 +709,8 @@ const ICO={
   bow:'<path d="M12 12C8 6 3 6 3 9v6c0 3 5 3 9-3Zm0 0c4-6 9-6 9-3v6c0 3-5 3-9-3Z"/><circle cx="12" cy="12" r="2"/>'
 };
 const ico=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICO[k]}</svg>`;
+const ACCVB={bow:"172 -2 72 66",collar:"100 122 112 50",flower:"78 12 60 54",glasses:"74 48 164 74",tiara:"114 -4 94 42",crown:"110 -10 92 52"};
+const ACCNONE='<circle cx="12" cy="12" r="7" fill="none" stroke="#d9b8c8" stroke-width="2"/><path d="M7 17 17 7" stroke="#d9b8c8" stroke-width="2" stroke-linecap="round"/>';
 const ICONS={hunger:ico("fish"),fun:ico("yarn"),clean:ico("bubbles"),energy:ico("bolt"),potty:ico("potty")};
 document.querySelectorAll("[data-i]").forEach(e=>e.innerHTML=ico(e.dataset.i));
 let BUSY=false;
@@ -762,7 +768,7 @@ function render(){
   $("sleeplabel").textContent=S.asleep?"Wake":"Nap";
   const curFur=f.id;
   $("furs").innerHTML=FURS.map(x=>{const lk=locked(x);return `<button class="chip${lk?" locked":""}" data-fur="${x.id}" aria-pressed="${x.id===curFur}" ${lk?"disabled":""}><span class="sw" style="background:${x.c}"></span>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
-  $("accs").innerHTML=ACCS.map(x=>{const lk=locked(x);return `<button class="chip acc${lk?" locked":""}" data-acc="${x.id}" aria-pressed="${x.id===S.acc}" ${lk?"disabled":""}><svg class="accimg" viewBox="56 -8 200 184" aria-hidden="true">${catSVG(b,f,x.id,{uid:"a"+x.id})}</svg>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
+  $("accs").innerHTML=ACCS.map(x=>{const lk=locked(x);return `<button class="chip acc${lk?" locked":""}" data-acc="${x.id}" aria-pressed="${x.id===S.acc}" ${lk?"disabled":""}><svg class="accimg" viewBox="${ACCVB[x.id]||"0 0 24 24"}" aria-hidden="true">${x.id==="none"?ACCNONE:accParts(x.id).join("")}</svg>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
   $("cats").innerHTML=BREEDS.map(x=>{const lk=locked(x);return `<button class="catcard${lk?" locked":""}" data-breed="${x.id}" aria-pressed="${x.id===S.breed}" ${lk?"disabled":""}><svg viewBox="0 0 300 260">${catSVG(x,furOf(x),"none",{uid:"c"+x.id})}</svg>${lk?"???":esc(nm(x))}<small>${lk?"Unlocks at Lv "+x.lvl:x.kind}</small></button>`}).join("");
 }
 
