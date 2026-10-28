@@ -278,6 +278,8 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .chip{border:3px solid transparent;border-radius:14px;background:#fff6f9;padding:6px 10px;font:800 .85rem var(--body);color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px}
 .chip[aria-pressed="true"]{border-color:var(--pink);background:#ffe6ef}
 .chip.locked{opacity:.55;cursor:not-allowed}
+.chip.acc{padding:4px 12px 4px 4px;gap:8px}
+.accimg{width:46px;height:42px;flex:none;border-radius:10px;background:#fff}
 .sw{width:20px;height:20px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line)}
 .cats{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
 .catcard{border:3px solid transparent;border-radius:18px;background:#fff6f9;padding:8px;cursor:pointer;text-align:center;font:800 .85rem var(--body);color:var(--ink)}
@@ -338,6 +340,8 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
   .close{width:52px;height:52px;font-size:1.4rem}
   .chips{gap:12px}
   .chip{font-size:1.05rem;padding:10px 16px;border-radius:18px;gap:8px}
+  .chip.acc{padding:6px 16px 6px 6px;gap:10px}
+  .accimg{width:62px;height:56px;border-radius:13px}
   .sw{width:28px;height:28px}
   .cats{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
   .catcard{font-size:1.05rem;padding:12px;border-radius:22px}
@@ -712,7 +716,7 @@ function render(){
   $("sleeplabel").textContent=S.asleep?"Wake":"Nap";
   const curFur=f.id;
   $("furs").innerHTML=FURS.map(x=>{const lk=locked(x);return `<button class="chip${lk?" locked":""}" data-fur="${x.id}" aria-pressed="${x.id===curFur}" ${lk?"disabled":""}><span class="sw" style="background:${x.c}"></span>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
-  $("accs").innerHTML=ACCS.map(x=>{const lk=locked(x);return `<button class="chip${lk?" locked":""}" data-acc="${x.id}" aria-pressed="${x.id===S.acc}" ${lk?"disabled":""}>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
+  $("accs").innerHTML=ACCS.map(x=>{const lk=locked(x);return `<button class="chip acc${lk?" locked":""}" data-acc="${x.id}" aria-pressed="${x.id===S.acc}" ${lk?"disabled":""}><svg class="accimg" viewBox="56 -8 200 184" aria-hidden="true">${catSVG(b,f,x.id,{uid:"a"+x.id})}</svg>${lk?"🔒 Lv "+x.lvl:x.name}</button>`}).join("");
   $("cats").innerHTML=BREEDS.map(x=>{const lk=locked(x);return `<button class="catcard${lk?" locked":""}" data-breed="${x.id}" aria-pressed="${x.id===S.breed}" ${lk?"disabled":""}><svg viewBox="0 0 300 260">${catSVG(x,furOf(x),"none",{uid:"c"+x.id})}</svg>${lk?"???":esc(nm(x))}<small>${lk?"Unlocks at Lv "+x.lvl:x.kind}</small></button>`}).join("");
 }
 
